@@ -1,0 +1,47 @@
+.row{
+  margin-bottom: 0;
+}
+
+.keyboard td, #pass-container{
+  text-align: center;
+  font-size: 1.2em;
+  color: #4CAF50;
+}
+
+#pass-container i {
+  position: absolute;
+  margin-top: 12px;
+  margin-left: 95px;
+  color: #3f51b5;
+}
+
+#send-container{
+  padding-bottom: 10px;
+}
+
+input[type=password]{
+  border-bottom: 1px solid #4CAF50;
+}
+
+#send-container a{
+  color: #727272;
+}
+
+td, th {
+  padding: 7px 5px;
+}
+
+input[type="password"]{
+  background-color: transparent !important;
+}
+.login-form{
+  margin: auto;
+}
+
+.waves-effect .waves-ripple {
+  -webkit-transition: all 10.01s ease-out;
+  -moz-transition: all 10.01s ease-out;
+  -o-transition: all 10.01s ease-out;
+  -ms-transition: all 10.01s ease-out;
+  transition: all 10.01s ease-out;
+}
