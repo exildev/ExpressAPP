@@ -2,6 +2,22 @@
   margin-bottom: 0;
 }
 
+#login-page{
+  height: 100%;
+}
+
+#login-page .card-panel{
+  height: calc(100% - 15px);
+}
+
+.keyboard {
+  height: calc(100% - 193px);
+}
+
+.keyboard table{
+  height: 100%;
+}
+
 .keyboard td, #pass-container{
   text-align: center;
   font-size: 1.2em;
@@ -11,7 +27,7 @@
 #pass-container i {
   position: absolute;
   margin-top: 12px;
-  margin-left: 95px;
+  margin-left: calc(50% - 60px);
   color: #3f51b5;
 }
 
@@ -34,8 +50,11 @@ td, th {
 input[type="password"]{
   background-color: transparent !important;
 }
+
 .login-form{
   margin: auto;
+  width: 100%;
+  height: 100%;
 }
 
 .waves-effect .waves-ripple {

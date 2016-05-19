@@ -49,6 +49,9 @@ angular.module('starter.controllers', [])
   $scope.erase = function(){
     $scope.password = $scope.password.slice(0, -1);
   }
+  $scope.eraseAll = function(){
+    $scope.password = "";
+  }
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
