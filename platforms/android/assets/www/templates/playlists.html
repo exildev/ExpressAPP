@@ -20,29 +20,36 @@
                     </td>
                   </tr>
                   <tr>
-                    <td ng-click="pressKey(1)"><span class="waves-effect waves-circle">1</span></td>
-                    <td ng-click="pressKey(2)"><span class="waves-effect waves-circle">2</span></td>
-                    <td ng-click="pressKey(3)"><span class="waves-effect waves-circle">3</span></td>
+                    <td ng-click="pressKey(1)"><a angular-ripple>1</a></td>
+                    <td ng-click="pressKey(2)"><a angular-ripple>2</a></td>
+                    <td ng-click="pressKey(3)"><a angular-ripple>3</a></td>
                   </tr>
                   <tr>
-                    <td ng-click="pressKey(4)"><span class="waves-effect waves-circle">4</span></td>
-                    <td ng-click="pressKey(5)"><span class="waves-effect waves-circle">5</span></td>
-                    <td ng-click="pressKey(6)"><span class="waves-effect waves-circle">6</span></td>
+                    <td ng-click="pressKey(4)"><a angular-ripple>4</a></td>
+                    <td ng-click="pressKey(5)"><a angular-ripple>5</a></td>
+                    <td ng-click="pressKey(6)"><a angular-ripple>6</a></td>
                   </tr>
                   <tr>
-                    <td ng-click="pressKey(7)"><span class="waves-effect waves-circle">7</span></td>
-                    <td ng-click="pressKey(8)"><span class="waves-effect waves-circle">8</span></td>
-                    <td ng-click="pressKey(9)"><span class="waves-effect waves-circle">9</span></td>
+                    <td ng-click="pressKey(7)"><a angular-ripple>7</a></td>
+                    <td ng-click="pressKey(8)"><a angular-ripple>8</a></td>
+                    <td ng-click="pressKey(9)"><a angular-ripple>9</a></td>
                   </tr>
                   <tr>
                     <td></td>
-                    <td ng-click="pressKey(0)"><span class="waves-effect waves-circle">0</span></td>
+                    <td ng-click="pressKey(0)"><a angular-ripple>0</a></td>
                     <td></td>
                   </tr>
                   <tr>
-                    <td><p class="margin ultra-small"><a href="#">GPS-QR</a></p></td>
-                    <td><a class="btn-floating waves-effect waves-light indigo"><i class="mdi-content-send"></i></a></td>
-                    <td></td>
+                    <td colspan="3" class="controls">
+                      <div class="col s4 gps-container">
+                        <span class="margin ultra-small left"><a href="#">GPS-QR</a></span>
+                      </div>
+                      <div class="col s4">
+                        <a class="btn-floating btn-large indigo" angular-ripple>
+                          <i class="mdi-content-send"></i>
+                        </a>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>

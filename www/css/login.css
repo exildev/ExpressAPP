@@ -11,7 +11,7 @@
 }
 
 .keyboard {
-  height: calc(100% - 193px);
+  height: calc(100% - 170px);
 }
 
 .keyboard table{
@@ -20,7 +20,11 @@
 
 .keyboard td, #pass-container{
   text-align: center;
-  font-size: 1.2em;
+  font-size: 1.6em;
+  color: #4CAF50;
+}
+
+.keyboard td > a{
   color: #4CAF50;
 }
 
@@ -43,12 +47,9 @@ input[type=password]{
   color: #727272;
 }
 
-td, th {
-  padding: 7px 5px;
-}
-
 input[type="password"]{
   background-color: transparent !important;
+  text-align: center;
 }
 
 .login-form{
@@ -57,10 +58,55 @@ input[type="password"]{
   height: 100%;
 }
 
-.waves-effect .waves-ripple {
-  -webkit-transition: all 10.01s ease-out;
-  -moz-transition: all 10.01s ease-out;
-  -o-transition: all 10.01s ease-out;
-  -ms-transition: all 10.01s ease-out;
-  transition: all 10.01s ease-out;
+.login-form h4{
+  margin-bottom: 0;
 }
+
+.gps-container {
+  height: 56px;
+  padding-top: 20px !important;
+}
+
+.btn-floating.btn-large i {
+    line-height: 60px;
+}
+
+.btn-floating.btn-large {
+    width: 60px;
+    height: 60px;
+}
+
+td[colspan="3"]{
+  padding: 0;
+}
+
+[angular-ripple] {
+    position: relative;
+    overflow: hidden;
+  }
+  .angular-ripple {
+    display: block;
+    position: absolute;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  .angular-ripple.animate {
+    -webkit-animation: ripple .35s linear;
+            animation: ripple .35s linear;
+  }
+  @-webkit-keyframes ripple {
+    100% {
+      opacity: 0;
+      -webkit-transform: scale(2.5);
+              transform: scale(2.5);
+    }
+  }
+  @keyframes ripple {
+    100% {
+      opacity: 0;
+      -webkit-transform: scale(2.5);
+              transform: scale(2.5);
+    }
+  }
