@@ -43,10 +43,10 @@
             ripple.className = ripple.className.replace(/ ?(animate)/g, '');
 
             // get click coordinates by event type
-            if (eventType === 'mouseup') {
+            if (eventType === 'mousedown') {
               x = e.pageX;
               y = e.pageY;
-            } else if (eventType === 'touchend') {
+            } else if (eventType === 'touchstart') {
               try {
                 var origEvent;
 
@@ -82,11 +82,11 @@
             ripple.className += ' animate';
           }
 
-        element.on('touchend mouseup', func);
+        element.on('touchstart mousedown', func);
 
         //remove the event listener on scope destroy
         scope.$on('$destroy',function() {
-          element.off('touchend mouseup', func);
+          element.off('touchstart mousedown', func);
         });
       }
     };
