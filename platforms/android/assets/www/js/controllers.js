@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope) {
+.controller('PlaylistsCtrl', function($scope, $http) {
   $scope.password = "";
   $scope.pressKey = function(number) {
     $scope.password += number;
@@ -51,6 +51,18 @@ angular.module('starter.controllers', [])
   }
   $scope.eraseAll = function(){
     $scope.password = "";
+  }
+
+  $scope.login = function(){
+    window.plugins.imeiplugin.getImei(function(imei){
+      console.log(imei);
+      $http.post('http://192.168.1.52:8000/users/user/ws/login', {'user': imei, 'password': $scope.password})
+      .then(function(){
+        console.log("envio bien")
+      }, function(){
+        console.log("Error en el envio")
+      });
+    });
   }
 })
 

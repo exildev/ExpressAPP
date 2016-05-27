@@ -24,6 +24,9 @@
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "com.joandilee.imeiplugin": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     },
     "dependent_plugins": {}

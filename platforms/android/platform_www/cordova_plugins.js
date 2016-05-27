@@ -28,6 +28,13 @@ module.exports = [
             "cordova.plugins.Keyboard"
         ],
         "runs": true
+    },
+    {
+        "file": "plugins/com.joandilee.imeiplugin/www/imeiplugin.js",
+        "id": "com.joandilee.imeiplugin.imeiplugin",
+        "clobbers": [
+            "imeiplugin"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -38,7 +45,8 @@ module.exports.metadata =
     "cordova-plugin-splashscreen": "3.2.2",
     "cordova-plugin-statusbar": "2.1.3",
     "cordova-plugin-whitelist": "1.2.2",
-    "ionic-plugin-keyboard": "2.2.0"
+    "ionic-plugin-keyboard": "2.2.0",
+    "com.joandilee.imeiplugin": "0.1"
 };
 // BOTTOM OF METADATA
 });

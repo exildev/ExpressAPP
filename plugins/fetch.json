@@ -47,5 +47,13 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "com.joandilee.imeiplugin": {
+        "source": {
+            "type": "registry",
+            "id": "imeiplugin"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }
