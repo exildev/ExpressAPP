@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http) {
+.controller('PlaylistsCtrl', function($scope, $http, $timeout) {
   $scope.password = "";
   $scope.pressKey = function(number) {
     $scope.password += number;
@@ -54,13 +54,18 @@ angular.module('starter.controllers', [])
   }
 
   $scope.login = function(){
+    $scope.submited = true;
+    $timeout(function() {
+        $scope.spinner_show = true;
+    }, 500);
     window.plugins.imeiplugin.getImei(function(imei){
-      console.log(imei);
-      $http.post('http://192.168.1.52:8000/users/user/ws/login', {'user': imei, 'password': $scope.password})
+      $http.post('http://192.168.1.52:8000/session/', {'username': imei, 'password': $scope.password})
       .then(function(){
-        console.log("envio bien")
+        alert("envio bien")
       }, function(){
-        console.log("Error en el envio")
+        $scope.submited = false;
+        $scope.spinner_show = false;
+        alert("Error en el envio")
       });
     });
   }

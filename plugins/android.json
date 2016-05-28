@@ -27,6 +27,9 @@
         },
         "com.joandilee.imeiplugin": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-x-toast": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     },
     "dependent_plugins": {}

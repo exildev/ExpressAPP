@@ -1,10 +1,10 @@
 <ion-view class="green lighten-4" hide-nav-bar="true">
     <div id="login-page" class="row">
       <div class="col s12 z-depth-4 card-panel">
-        <form class="login-form" ng-submit="doForm()">
-          <div class="row">
+        <form class="login-form" ng-submit="doForm()" ng-class="{'hide-keyboard':submited}">
+          <div class="row header">
             <div class="input-field col s12 center">
-              <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
+              <img src="images/avatar.jpg" alt="" class="circle responsive-img valign" ng-class="{'profile-image-login':!submited, 'img-login-big':submited}">
               <h4 class="header">John Doe</h4>
             </div>
           </div>
@@ -53,6 +53,7 @@
                   </tr>
                 </tbody>
               </table>
+              <ion-spinner icon="dots" ng-show="spinner_show"></ion-spinner>
           </div>
         </form>
       </div>

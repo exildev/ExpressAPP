@@ -12,6 +12,31 @@
 
 .keyboard {
   height: calc(100% - 170px);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.hide-keyboard .keyboard{
+  margin-top: 100%;
+}
+
+.hide-keyboard div.header{
+  margin-top: 50%;
+}
+
+.img-login-big {
+  width: 120px;
+  height: 120px !important;
+}
+
+.login-form img{
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.header{
+  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .keyboard table{
@@ -110,3 +135,13 @@ td[colspan="3"]{
               transform: scale(2.5);
     }
   }
+
+.spinner svg {
+  width: 25px;
+  height: 25px;
+  stroke: #444;
+  fill: #444;
+  position: fixed;
+  top: calc(60% + 15px);
+  left: calc(50% - 10px);
+}
