@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $timeout) {
+.controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner) {
   $scope.password = "";
   $scope.pressKey = function(number) {
     $scope.password += number;
@@ -68,6 +68,22 @@ angular.module('starter.controllers', [])
         alert("Error en el envio")
       });
     });
+  }
+
+
+  var socket = io('http://104.236.33.228:3000');
+  socket.emit('i-am', 'CELL');
+  $scope.leerQR = function() {
+      alert("voy a leer el codigo");
+      $cordovaBarcodeScanner.scan().then(function(imagenEscaneada) {
+        console.log(imagenEscaneada);
+        window.plugins.imeiplugin.getImei(function(imei){
+          console.log({'web_id': imagenEscaneada.text, 'cell_id': imei}, socket);
+          socket.emit('ionic-qr', {'web_id': imagenEscaneada.text, 'cell_id': imei});  
+        });
+      }, function(error){
+          alert('Ha ocurrido un error ' + error);
+      });
   }
 })
 
