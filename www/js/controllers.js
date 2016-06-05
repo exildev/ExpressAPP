@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $cordovaLocalNotification, $rootScope) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -8,7 +8,57 @@ angular.module('starter.controllers', [])
   // listen for the $ionicView.enter event:
   //$scope.$on('$ionicView.enter', function(e) {
   //});
+  
+  
+  var actions = [ {
+        identifier: 'SIGN_IN',
+        title: 'Yes',
+        icon: 'res://ic_signin',
+        activationMode: 'background',
+        destructive: false,
+        authenticationRequired: true
+    },
+    {
+       identifier: 'MORE_SIGNIN_OPTIONS',
+       title: 'More Options',
+       icon: 'res://ic_moreoptions',
+       activationMode: 'foreground',
+       destructive: false,
+       authenticationRequired: false
+    },
+    {
+       identifier: 'PROVIDE_INPUT',
+       title: 'Provide Input',
+       icon: 'ic_input',
+       activationMode: 'background',
+       destructive: false,
+       authenticationRequired: false,
+       behavior: 'textInput',
+       textInputSendTitle: 'Reply'
+  }];
+  
+  $scope.socket = io('http://192.168.1.52:3000');
+  $scope.socket.emit('i-am', 'CELL');
 
+  $scope.socket.on('notify-pedido', function(pedido) {
+    console.log(pedido);
+    $cordovaLocalNotification.schedule({
+      id: 1,
+      title: 'Motorizado Tales Pascuales',
+      text: 'Tiene una entrega por recojer en tal lado',
+      actions: [actions[0], actions[1]],
+      category: 'SIGN_IN_TO_CLASS'
+
+    }).then(function (result) {
+      console.log('notify-pedido', result);
+    });
+  });
+
+  $rootScope.$on('$cordovaLocalNotification:click',
+    function (event, notification, state) {
+      console.log(event, notification, state);
+    }
+  );
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -42,6 +92,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner) {
+  console.log("sokect tales", $scope.socket);
   $scope.password = "";
   $scope.pressKey = function(number) {
     $scope.password += number;
@@ -61,25 +112,23 @@ angular.module('starter.controllers', [])
     window.plugins.imeiplugin.getImei(function(imei){
       $http.post('http://192.168.1.52:8000/session/', {'username': imei, 'password': $scope.password})
       .then(function(){
-        alert("envio bien")
+        window.plugins.imeiplugin.getImei(function(imei){
+          $scope.socket.emit('cell-active',{'cell_id': imei});
+        });
+        alert("envio bien");
       }, function(){
         $scope.submited = false;
         $scope.spinner_show = false;
-        alert("Error en el envio")
+        alert("Error en el envio");
       });
     });
   }
 
-
-  var socket = io('http://104.236.33.228:3000');
-  socket.emit('i-am', 'CELL');
   $scope.leerQR = function() {
-      alert("voy a leer el codigo");
       $cordovaBarcodeScanner.scan().then(function(imagenEscaneada) {
         console.log(imagenEscaneada);
         window.plugins.imeiplugin.getImei(function(imei){
-          console.log({'web_id': imagenEscaneada.text, 'cell_id': imei}, socket);
-          socket.emit('ionic-qr', {'web_id': imagenEscaneada.text, 'cell_id': imei});  
+          $scope.socket.emit('ionic-qr', {'web_id': imagenEscaneada.text, 'cell_id': imei});
         });
       }, function(error){
           alert('Ha ocurrido un error ' + error);
@@ -88,4 +137,8 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
+})
+
+.controller('EntregaCtrl', function($scope) {
+
 });

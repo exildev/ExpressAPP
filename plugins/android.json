@@ -33,10 +33,19 @@
         },
         "phonegap-plugin-barcodescanner": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "de.appplant.cordova.plugin.local-notification-ios9-fix": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "de.appplant.cordova.plugin.local-notification": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     },
     "dependent_plugins": {
         "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-app-event": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     }

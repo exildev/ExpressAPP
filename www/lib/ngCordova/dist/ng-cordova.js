@@ -4811,6 +4811,13 @@ angular.module('ngCordova.plugins.localNotification', [])
 
   .factory('$cordovaLocalNotification', ['$q', '$window', '$rootScope', '$timeout', function ($q, $window, $rootScope, $timeout) {
     document.addEventListener('deviceready', function () {
+
+      $window.cordova.plugins.notification.local.on('action', function (notification, state, data) {
+        $timeout(function () {
+          $rootScope.$broadcast('$cordovaLocalNotification:action', notification, state, data);
+        });
+      });
+      
       if ($window.cordova &&
         $window.cordova.plugins &&
         $window.cordova.plugins.notification &&

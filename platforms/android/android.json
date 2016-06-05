@@ -39,6 +39,10 @@
                         {
                             "xml": "<feature name=\"BarcodeScanner\"><param name=\"android-package\" value=\"com.phonegap.plugins.barcodescanner.BarcodeScanner\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"LocalNotification\"><param name=\"android-package\" value=\"de.appplant.cordova.plugin.localnotification.LocalNotification\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -61,6 +65,14 @@
                         {
                             "xml": "<uses-feature android:name=\"android.hardware.camera\" android:required=\"false\" />",
                             "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+                            "count": 1
                         }
                     ],
                     "/manifest/application": [
@@ -74,6 +86,34 @@
                         },
                         {
                             "xml": "<activity android:label=\"Share\" android:name=\"com.google.zxing.client.android.HelpActivity\"><intent-filter><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /></intent-filter></activity>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<receiver android:exported=\"false\" android:name=\"de.appplant.cordova.plugin.localnotification.TriggerReceiver\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<receiver android:exported=\"false\" android:name=\"de.appplant.cordova.plugin.localnotification.ClearReceiver\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<activity android:exported=\"false\" android:launchMode=\"singleInstance\" android:name=\"de.appplant.cordova.plugin.localnotification.ClickActivity\" android:theme=\"@android:style/Theme.NoDisplay\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<receiver android:exported=\"false\" android:name=\"de.appplant.cordova.plugin.notification.TriggerReceiver\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<receiver android:exported=\"false\" android:name=\"de.appplant.cordova.plugin.notification.ClearReceiver\" />",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<receiver android:exported=\"false\" android:name=\"de.appplant.cordova.plugin.localnotification.RestoreReceiver\"><intent-filter><action android:name=\"android.intent.action.BOOT_COMPLETED\" /></intent-filter></receiver>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<activity android:exported=\"false\" android:launchMode=\"singleInstance\" android:name=\"de.appplant.cordova.plugin.notification.ClickActivity\" android:theme=\"@android:style/Theme.NoDisplay\" />",
                             "count": 1
                         }
                     ]
@@ -110,6 +150,15 @@
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
         "phonegap-plugin-barcodescanner": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "de.appplant.cordova.plugin.local-notification-ios9-fix": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-app-event": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "de.appplant.cordova.plugin.local-notification": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     },
@@ -168,6 +217,54 @@
             "clobbers": [
                 "cordova.plugins.barcodeScanner"
             ]
+        },
+        {
+            "file": "plugins/de.appplant.cordova.plugin.local-notification-ios9-fix/www/local-notification.js",
+            "id": "de.appplant.cordova.plugin.local-notification-ios9-fix.LocalNotification",
+            "clobbers": [
+                "cordova.plugins.notification.local",
+                "plugin.notification.local"
+            ]
+        },
+        {
+            "file": "plugins/de.appplant.cordova.plugin.local-notification-ios9-fix/www/local-notification-core.js",
+            "id": "de.appplant.cordova.plugin.local-notification-ios9-fix.LocalNotification.Core",
+            "clobbers": [
+                "cordova.plugins.notification.local.core",
+                "plugin.notification.local.core"
+            ]
+        },
+        {
+            "file": "plugins/de.appplant.cordova.plugin.local-notification-ios9-fix/www/local-notification-util.js",
+            "id": "de.appplant.cordova.plugin.local-notification-ios9-fix.LocalNotification.Util",
+            "merges": [
+                "cordova.plugins.notification.local.core",
+                "plugin.notification.local.core"
+            ]
+        },
+        {
+            "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification.js",
+            "id": "de.appplant.cordova.plugin.local-notification.LocalNotification",
+            "clobbers": [
+                "cordova.plugins.notification.local",
+                "plugin.notification.local"
+            ]
+        },
+        {
+            "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification-core.js",
+            "id": "de.appplant.cordova.plugin.local-notification.LocalNotification.Core",
+            "clobbers": [
+                "cordova.plugins.notification.local.core",
+                "plugin.notification.local.core"
+            ]
+        },
+        {
+            "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification-util.js",
+            "id": "de.appplant.cordova.plugin.local-notification.LocalNotification.Util",
+            "merges": [
+                "cordova.plugins.notification.local.core",
+                "plugin.notification.local.core"
+            ]
         }
     ],
     "plugin_metadata": {
@@ -180,6 +277,9 @@
         "com.joandilee.imeiplugin": "0.1",
         "cordova-plugin-x-toast": "2.5.1",
         "cordova-plugin-compat": "1.0.0",
-        "phonegap-plugin-barcodescanner": "5.0.0"
+        "phonegap-plugin-barcodescanner": "5.0.0",
+        "de.appplant.cordova.plugin.local-notification-ios9-fix": "0.8.2",
+        "cordova-plugin-app-event": "1.2.0",
+        "de.appplant.cordova.plugin.local-notification": "0.8.4"
     }
 }

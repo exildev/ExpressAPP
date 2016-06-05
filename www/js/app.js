@@ -25,18 +25,19 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'angular
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('app', {
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
     controller: 'AppCtrl'
   })
 
-  .state('app.search', {
-    url: '/search',
+  .state('app.entregas', {
+    url: '/entregas',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'templates/entregas.html',
+        controller: 'EntregaCtrl'
       }
     }
   })
