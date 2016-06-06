@@ -1,15 +1,32 @@
 <ion-view view-title="Entregas">
 	<ion-content>
-		<div class="row">
-			<div class="col s12">
-				<ul class="tabs">
-					<li class="tab col s3"><a>Disponibles</a></li>
-					<li class="tab col s3"><a class="active">Realizados</a></li>
+		<div class="row mt-row">
+    		<div class="col s12">
+        		<ul tabs>
+					<li class="tab col s3"><a class="active" href="#pendientes">Pendientes</a></li>
+					<li class="tab col s3"><a href="#realizados">Realizados</a></li>
 				</ul>
 			</div>
-		</div>
-		<div class="row">
-			
+			<div id="pendientes" class="col s12">
+				<ul class="collapsible" data-collapsible="accordion" watch>
+					<li ng-repeat="(key, value) in pedidos">
+						<div class="collapsible-header">
+							<i class="mdi-action-account-child"></i>{{value.cliente.dirreccion}}
+						</div>
+						<div class="collapsible-body">
+							<div class="collection">
+							 	<a class="collection-item">Cliente: {{value.cliente.nombre}} {{value.cliente.apellidos}}</a>
+							    <a class="collection-item">Tienda: {{value.tienda}}</a>
+							    <div class="collection-item">
+							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;"><i class="mdi-action-done"></i>Rechazar</a>
+							    	<a class="waves-effect waves-light btn green" style="width:49%; padding: 0 1rem;"><i class="mdi-action-done"></i>Aceptar</a>
+							    </div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div id="realizados" class="col s12">Test 2</div>
 		</div>
 	</ion-content>
 </ion-view>

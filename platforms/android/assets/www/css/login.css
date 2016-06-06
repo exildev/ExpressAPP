@@ -145,3 +145,8 @@ td[colspan="3"]{
   top: calc(60% + 15px);
   left: calc(50% - 10px);
 }
+
+.mt-row{
+  display: block;
+  padding: 0;
+}

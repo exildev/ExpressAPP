@@ -42,16 +42,21 @@ angular.module('starter.controllers', [])
 
   $scope.socket.on('notify-pedido', function(pedido) {
     console.log(pedido);
+    $scope.pedidos.push(pedido);
     $cordovaLocalNotification.schedule({
       id: 1,
       title: 'Motorizado Tales Pascuales',
       text: 'Tiene una entrega por recojer en tal lado',
       actions: [actions[0], actions[1]],
       category: 'SIGN_IN_TO_CLASS'
-      
+
     }).then(function (result) {
       console.log('notify-pedido', result);
     });
+  });
+
+  $scope.socket.on('list-pedidos', function(pedidos) {
+    $scope.pedidos = pedidos;
   });
 
   $rootScope.$on('$cordovaLocalNotification:click',
@@ -91,7 +96,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner) {
+.controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner, $state) {
   console.log("sokect tales", $scope.socket);
   $scope.password = "";
   $scope.pressKey = function(number) {
@@ -115,7 +120,10 @@ angular.module('starter.controllers', [])
         window.plugins.imeiplugin.getImei(function(imei){
           $scope.socket.emit('cell-active',{'cell_id': imei});
         });
-        alert("envio bien");
+        //location.href = '#app/entregas';
+        //window.location.replace('#app/entregas');
+        //$location.path('/entregas');
+        $state.go('app.entregas');
       }, function(){
         $scope.submited = false;
         $scope.spinner_show = false;
@@ -137,4 +145,8 @@ angular.module('starter.controllers', [])
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
+})
+
+.controller('EntregaCtrl', function($scope) {
+
 });
