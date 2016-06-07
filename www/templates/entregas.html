@@ -18,8 +18,9 @@
 							 	<a class="collection-item">Cliente: {{value.pedido.cliente.nombre}} {{value.cliente.apellidos}}</a>
 							    <a class="collection-item">Tienda: {{value.pedido.tienda}}</a>
 							    <div class="collection-item">
-							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;" ng-click="reject_pedido({{value.id}})"><i class="mdi-action-done"></i>Rechazar</a>
-							    	<a class="waves-effect waves-light btn green" style="width:49%; padding: 0 1rem;"><i class="mdi-action-done"></i>Aceptar</a>
+							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;" ng-click="reject_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true"><i class="mdi-action-done"></i>Rechazar</a>
+							    	<a class="waves-effect waves-light btn green" style="width:49%; padding: 0 1rem;" ng-click="accept_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true"><i class="mdi-action-done"></i>Aceptar</a>
+							    	<a class="waves-effect waves-light btn green right" style="width:49%; padding: 0 1rem;" ng-click="accept_pedido({{value.id}})" ng-show="accepted[{{value.id}}] == true"><i class="mdi-action-done"></i>Confirmar</a>
 							    </div>
 							</div>
 						</div>

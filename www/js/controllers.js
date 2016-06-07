@@ -137,6 +137,8 @@ angular.module('starter.controllers', [])
 
 .controller('EntregaCtrl', function($scope, $cordovaLocalNotification) {
 
+  $scope.accepted = {};
+
   $scope.reject_pedido = function(id){
 
     var f_p = function(p){
@@ -165,6 +167,10 @@ angular.module('starter.controllers', [])
     if(values){
       window.plugins.imeiplugin.getImei(function(imei){
         $scope.socket.emit('accept-pedido', {'pedido_id': id, 'cell_id': imei});
+        $scope.accepted[id] = true;
+      });
+      $cordovaLocalNotification.cancel(id).then(function (result) {
+        console.log("notificacion borrada");
       });
     }
   }
