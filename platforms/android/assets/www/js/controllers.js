@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $cordovaLocalNotification, $rootScope) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -9,6 +9,7 @@ angular.module('starter.controllers', [])
   //$scope.$on('$ionicView.enter', function(e) {
   //});
   
+  $scope.pedidos = [];
   
   var actions = [ {
         identifier: 'SIGN_IN',
@@ -40,30 +41,15 @@ angular.module('starter.controllers', [])
   $scope.socket = io('http://192.168.1.52:3000');
   $scope.socket.emit('i-am', 'CELL');
 
-  $scope.socket.on('notify-pedido', function(pedido) {
-    console.log(pedido);
-    $scope.pedidos.push(pedido);
-    $cordovaLocalNotification.schedule({
-      id: 1,
-      title: 'Motorizado Tales Pascuales',
-      text: 'Tiene una entrega por recojer en tal lado',
-      actions: [actions[0], actions[1]],
-      category: 'SIGN_IN_TO_CLASS'
-
-    }).then(function (result) {
-      console.log('notify-pedido', result);
-    });
-  });
-
   $scope.socket.on('list-pedidos', function(pedidos) {
     $scope.pedidos = pedidos;
   });
 
-  $rootScope.$on('$cordovaLocalNotification:click',
+  /*$rootScope.$on('$cordovaLocalNotification:click',
     function (event, notification, state) {
       console.log(event, notification, state);
     }
-  );
+  );*/
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -96,8 +82,9 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner, $state) {
-  console.log("sokect tales", $scope.socket);
+.controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner, $state, $ionicSideMenuDelegate) {
+  $ionicSideMenuDelegate.canDragContent(false);
+
   $scope.password = "";
   $scope.pressKey = function(number) {
     $scope.password += number;
@@ -114,19 +101,19 @@ angular.module('starter.controllers', [])
     $timeout(function() {
         $scope.spinner_show = true;
     }, 500);
+
     window.plugins.imeiplugin.getImei(function(imei){
       $http.post('http://192.168.1.52:8000/session/', {'username': imei, 'password': $scope.password})
       .then(function(){
         window.plugins.imeiplugin.getImei(function(imei){
           $scope.socket.emit('cell-active',{'cell_id': imei});
         });
-        //location.href = '#app/entregas';
-        //window.location.replace('#app/entregas');
-        //$location.path('/entregas');
         $state.go('app.entregas');
       }, function(){
         $scope.submited = false;
-        $scope.spinner_show = false;
+        $timeout(function() {
+          $scope.spinner_show = false;
+        }, 500);
         alert("Error en el envio");
       });
     });
@@ -136,6 +123,7 @@ angular.module('starter.controllers', [])
       $cordovaBarcodeScanner.scan().then(function(imagenEscaneada) {
         console.log(imagenEscaneada);
         window.plugins.imeiplugin.getImei(function(imei){
+          console.log(imei);
           $scope.socket.emit('ionic-qr', {'web_id': imagenEscaneada.text, 'cell_id': imei});
         });
       }, function(error){
@@ -147,6 +135,57 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
 
-.controller('EntregaCtrl', function($scope) {
+.controller('EntregaCtrl', function($scope, $cordovaLocalNotification) {
 
+  $scope.reject_pedido = function(id){
+
+    var f_p = function(p){
+      return p.id == id
+    }
+    var values = $scope.pedidos.filter(f_p);
+    var index = -1;
+    if(values){
+      index = $scope.pedidos.indexOf(values[0]); 
+    }
+    console.log("eliminare el pedido", index, values);
+    if (index > -1) {
+      delete $scope.pedidos[index];
+      $scope.pedidos.splice(index, 1);
+      $cordovaLocalNotification.cancel(id).then(function (result) {
+        console.log("notificacion borrada");
+      });
+    }
+  }
+
+  $scope.socket.on('notify-pedido', function(pedido) {
+    console.log(pedido)
+    $scope.pedidos.push(pedido);
+    $scope.$apply();
+    $cordovaLocalNotification.schedule({
+      id: pedido.id,
+      title: 'Motorizado Tales Pascuales',
+      text: 'Tiene una entrega por recojer en tal lado',
+    });
+  });
+  
+  $scope.socket.on('delete-pedido', function(pedido) {
+    var f_p = function(p){
+      return p.id == pedido.id
+    }
+
+    var values = $scope.pedidos.filter(f_p);
+    var index = -1;
+    if(values){
+      index = $scope.pedidos.indexOf(values[0]); 
+    }
+    console.log("eliminare el pedido", index, pedido);
+    if (index > -1) {
+      delete $scope.pedidos[index];
+      $scope.pedidos.splice(index, 1);
+      $scope.$apply();
+      $cordovaLocalNotification.cancel(pedido.id).then(function (result) {
+        console.log("notificacion borrada");
+      });
+    }
+  });
 });

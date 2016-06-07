@@ -9,16 +9,16 @@
 			</div>
 			<div id="pendientes" class="col s12">
 				<ul class="collapsible" data-collapsible="accordion" watch>
-					<li ng-repeat="(key, value) in pedidos">
+					<li ng-repeat="value in pedidos">
 						<div class="collapsible-header">
-							<i class="mdi-action-account-child"></i>{{value.cliente.dirreccion}}
+							<i class="mdi-maps-directions"></i>{{value.pedido.cliente.dirreccion}}
 						</div>
 						<div class="collapsible-body">
 							<div class="collection">
-							 	<a class="collection-item">Cliente: {{value.cliente.nombre}} {{value.cliente.apellidos}}</a>
-							    <a class="collection-item">Tienda: {{value.tienda}}</a>
+							 	<a class="collection-item">Cliente: {{value.pedido.cliente.nombre}} {{value.cliente.apellidos}}</a>
+							    <a class="collection-item">Tienda: {{value.pedido.tienda}}</a>
 							    <div class="collection-item">
-							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;"><i class="mdi-action-done"></i>Rechazar</a>
+							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;" ng-click="reject_pedido({{value.id}})"><i class="mdi-action-done"></i>Rechazar</a>
 							    	<a class="waves-effect waves-light btn green" style="width:49%; padding: 0 1rem;"><i class="mdi-action-done"></i>Aceptar</a>
 							    </div>
 							</div>

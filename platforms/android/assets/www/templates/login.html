@@ -1,52 +1,25 @@
-<ion-view class="green lighten-4" hide-nav-bar="true">
-    <div id="login-page" class="row">
-      <div class="col s12 z-depth-4 card-panel">
-        <form class="login-form" ng-submit="doForm()">
-          <div class="row">
-            <div class="input-field col s12 center">
-              <img src="images/avatar.jpg" alt="" class="circle responsive-img valign profile-image-login">
-              <h4 class="header">John Doe</h4>
-            </div>
-          </div>
-          <div class="row keyboard">
-              <table>
-                <tbody>
-                  <tr>
-                    <td colspan="3">
-                      <div class="col s12" id="pass-container">
-                          <i class="mdi-content-backspace"></i>
-                          <input type="password" name="name" value="" readonly>
-                      </div>
-                    </td>
-                  </tr>                  <tr>
-                    <td ng-click="pressKey(1)"><span class="waves-effect waves-circle">1</span></td>
-                    <td><span class="waves-effect waves-circle">2</span></td>
-                    <td><span class="waves-effect waves-circle">3</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="waves-effect waves-circle">4</span></td>
-                    <td><span class="waves-effect waves-circle">5</span></td>
-                    <td><span class="waves-effect waves-circle">6</span></td>
-                  </tr>
-                  <tr>
-                    <td><span class="waves-effect waves-circle">7</span></td>
-                    <td><span class="waves-effect waves-circle">8</span></td>
-                    <td><span class="waves-effect waves-circle">9</span></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td><span class="waves-effect waves-circle">0</span></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td><p class="margin ultra-small"><a href="#">GPS-QR</a></p></td>
-                    <td><a class="btn-floating waves-effect waves-light indigo"><i class="mdi-content-send"></i></a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-          </div>
-        </form>
-      </div>
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Login</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeLogin()">Close</button>
     </div>
-</ion-view>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="doLogin()">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Username</span>
+          <input type="text" ng-model="loginData.username">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Password</span>
+          <input type="password" ng-model="loginData.password">
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Log in</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</ion-modal-view>

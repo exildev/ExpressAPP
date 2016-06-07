@@ -1,5 +1,5 @@
 /*!
- * angular-ripple.js v0.0.5 - A standalone AngularJS implementation of the Google Material Design ripple effect.
+ * angular-ripple.js v0.0.7 - A standalone AngularJS implementation of the Google Material Design ripple effect.
  * Copyright (c) 2014 Nelson Cash - http://github.com/nelsoncash/angular-ripple
  * http://codepen.io/MikeMcChillin/pen/XJrLwg
  * License: MIT
@@ -82,11 +82,12 @@
             ripple.className += ' animate';
           }
 
-        element.on('touchstart mousedown', func);
+        var eventType = ('ontouchstart' in document) ? 'touchstart' : 'mousedown';
+        element.on(eventType, func);
 
         //remove the event listener on scope destroy
         scope.$on('$destroy',function() {
-          element.off('touchstart mousedown', func);
+          element.off(eventType, func);
         });
       }
     };
