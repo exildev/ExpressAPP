@@ -38,7 +38,7 @@ angular.module('starter.controllers', [])
        textInputSendTitle: 'Reply'
   }];
   
-  $scope.socket = io('http://192.168.1.52:3000');
+  $scope.socket = io('http://192.168.0.102:3000');
   $scope.socket.emit('i-am', 'CELL');
 
   $scope.socket.on('list-pedidos', function(pedidos) {
@@ -103,7 +103,7 @@ angular.module('starter.controllers', [])
     }, 500);
 
     window.plugins.imeiplugin.getImei(function(imei){
-      $http.post('http://192.168.1.52:8000/session/', {'username': imei, 'password': $scope.password})
+      $http.post('http://192.168.0.102:8000/session/', {'username': imei, 'password': $scope.password})
       .then(function(){
         window.plugins.imeiplugin.getImei(function(imei){
           $scope.socket.emit('cell-active',{'cell_id': imei});
@@ -135,7 +135,7 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
 
-.controller('EntregaCtrl', function($scope, $cordovaLocalNotification) {
+.controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation) {
 
   $scope.accepted = {};
 
@@ -160,6 +160,7 @@ angular.module('starter.controllers', [])
   }
 
   $scope.accept_pedido = function(id){
+    var intervalGPS;
     var f_p = function(p){
       return p.id == id
     }
@@ -168,6 +169,18 @@ angular.module('starter.controllers', [])
       window.plugins.imeiplugin.getImei(function(imei){
         $scope.socket.emit('accept-pedido', {'pedido_id': id, 'cell_id': imei});
         $scope.accepted[id] = true;
+        if (!angular.isDefined(stop)) {
+          intervalGPS = $interval(function() {
+            var posOptions = {timeout: 10000, enableHighAccuracy: true};
+              $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+                var lat  = position.coords.latitude;
+                var long = position.coords.longitude;
+                socket.emit('send-gps', {'lat': lat, 'long': long});
+              }, function(err) {
+                socket.emit('send-gps', {'error': err});
+              });
+          }, 10000);
+        };
       });
       $cordovaLocalNotification.cancel(id).then(function (result) {
         console.log("notificacion borrada");

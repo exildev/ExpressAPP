@@ -38,7 +38,7 @@ angular.module('starter.controllers', [])
        textInputSendTitle: 'Reply'
   }];
   
-  $scope.socket = io('http://192.168.1.52:3000');
+  $scope.socket = io('http://192.168.0.102:3000');
   $scope.socket.emit('i-am', 'CELL');
 
   $scope.socket.on('list-pedidos', function(pedidos) {
@@ -103,7 +103,7 @@ angular.module('starter.controllers', [])
     }, 500);
 
     window.plugins.imeiplugin.getImei(function(imei){
-      $http.post('http://192.168.1.52:8000/session/', {'username': imei, 'password': $scope.password})
+      $http.post('http://192.168.0.102:8000/session/', {'username': imei, 'password': $scope.password})
       .then(function(){
         window.plugins.imeiplugin.getImei(function(imei){
           $scope.socket.emit('cell-active',{'cell_id': imei});
