@@ -11,33 +11,6 @@ angular.module('starter.controllers', [])
   
   $scope.pedidos = [];
   
-  var actions = [ {
-        identifier: 'SIGN_IN',
-        title: 'Yes',
-        icon: 'res://ic_signin',
-        activationMode: 'background',
-        destructive: false,
-        authenticationRequired: true
-    },
-    {
-       identifier: 'MORE_SIGNIN_OPTIONS',
-       title: 'More Options',
-       icon: 'res://ic_moreoptions',
-       activationMode: 'foreground',
-       destructive: false,
-       authenticationRequired: false
-    },
-    {
-       identifier: 'PROVIDE_INPUT',
-       title: 'Provide Input',
-       icon: 'ic_input',
-       activationMode: 'background',
-       destructive: false,
-       authenticationRequired: false,
-       behavior: 'textInput',
-       textInputSendTitle: 'Reply'
-  }];
-  
   $scope.socket = io('http://192.168.0.102:3000');
   $scope.socket.emit('i-am', 'CELL');
 
@@ -197,8 +170,8 @@ angular.module('starter.controllers', [])
     $scope.$apply();
     $cordovaLocalNotification.schedule({
       id: pedido.id,
-      title: 'Motorizado Tales Pascuales',
-      text: 'Tiene una entrega por recojer en tal lado',
+      title: "Pedido para la " + pedido.pedido.cliente.dirreccion,
+      text: 'para reocojer en la tienda ' + pedido.pedido.tienda,
     });
   });
   
@@ -222,4 +195,16 @@ angular.module('starter.controllers', [])
       });
     }
   });
+
+  $scope.socket.on('request-gps', function(data){
+    var posOptions = {timeout: 10000, enableHighAccuracy: true};
+    $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+      var lat  = position.coords.latitude;
+        var long = position.coords.longitude;
+        console.log(lat, long);
+        $scope.socket.emit('reponse-gps', {'lat': lat, 'long': long});
+    }, function(error){
+      console.log(errors)
+    })
+  })
 });
