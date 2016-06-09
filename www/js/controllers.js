@@ -135,7 +135,7 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
 
-.controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation) {
+.controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval) {
 
   $scope.accepted = {};
 
@@ -169,15 +169,18 @@ angular.module('starter.controllers', [])
       window.plugins.imeiplugin.getImei(function(imei){
         $scope.socket.emit('accept-pedido', {'pedido_id': id, 'cell_id': imei});
         $scope.accepted[id] = true;
-        if (!angular.isDefined(stop)) {
+        if (!angular.isDefined(intervalGPS)) {
+          console.log("entre");
           intervalGPS = $interval(function() {
+            console.log("Estoy en el interval");
             var posOptions = {timeout: 10000, enableHighAccuracy: true};
               $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
                 var lat  = position.coords.latitude;
                 var long = position.coords.longitude;
-                socket.emit('send-gps', {'lat': lat, 'long': long});
+                console.log(lat, long);
+                $scope.socket.emit('send-gps', {'lat': lat, 'long': long});
               }, function(err) {
-                socket.emit('send-gps', {'error': err});
+                $scope.socket.emit('send-gps', {'error': err});
               });
           }, 10000);
         };
