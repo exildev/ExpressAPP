@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope, $state) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -10,12 +10,34 @@ angular.module('starter.controllers', [])
   //});
   
   $scope.pedidos = [];
+  $scope.logged = false;
+  $scope.socket_pass = '123456';
+  $scope.socket_user = 'user1';
   
-  $scope.socket = io('http://192.168.0.102:3000');
+  $scope.socket = io('http://192.168.1.52:4000');
   $scope.socket.emit('i-am', 'CELL');
 
-  $scope.socket.on('list-pedidos', function(pedidos) {
-    $scope.pedidos = pedidos;
+  document.addEventListener('deviceready', function() {
+    window.plugins.imeiplugin.getImei(function(imei){
+      $scope.socket.emit('identify', {
+        'django_id': imei,
+        'usertype': 'CELL'
+      });
+    });
+  });
+
+  $scope.socket.on('identify', function(message) {
+    console.log(message);
+    if(!message['ID']){
+      console.log($scope.logged);
+      if($scope.logged){
+        $scope.socket_login();
+      }else{
+        $state.go('app.playlists');
+      }
+    }else{
+      console.log("tales pascualitos");
+    }
   });
 
   /*$rootScope.$on('$cordovaLocalNotification:click',
@@ -23,36 +45,28 @@ angular.module('starter.controllers', [])
       console.log(event, notification, state);
     }
   );*/
-  // Form data for the login modal
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
+  $scope.socket_login = function(){
+    window.plugins.imeiplugin.getImei(function(imei){
+      $scope.socket.emit('login', {
+        'django_id': imei,
+        'usertype': 'CELL',
+        'web_password': $scope.password,
+        'password': $scope.socket_pass,
+        'username': $scope.socket_user
+      });
+    });
+    $scope.socket.on('success-login', function() {
+      $scope.logged = true;
+      $state.go('app.entregas');
+    });
+    $scope.socket.on('error-login', function() {
+      $scope.submited = false;
+      $timeout(function() {
+          $scope.spinner_show = false;
+        }, 500);
+        alert("Error al intentar iniciar sesión");
+    });
+  }
 })
 
 .controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner, $state, $ionicSideMenuDelegate) {
@@ -76,19 +90,24 @@ angular.module('starter.controllers', [])
     }, 500);
 
     window.plugins.imeiplugin.getImei(function(imei){
-      $http.post('http://192.168.0.102:8000/session/', {'username': imei, 'password': $scope.password})
-      .then(function(){
-        window.plugins.imeiplugin.getImei(function(imei){
-          $scope.socket.emit('cell-active',{'cell_id': imei});
-        });
-        $state.go('app.entregas');
-      }, function(){
-        $scope.submited = false;
-        $timeout(function() {
+      $scope.socket.emit('web-login', {
+        'django_id': imei,
+        'usertype': 'CELL',
+        'web_password': $scope.password,
+        'password': $scope.socket_pass,
+        'username': $scope.socket_user
+      });
+    });
+    $scope.socket.on('web-success-login', function() {
+      $scope.logged = true;
+      $state.go('app.entregas');
+    });
+    $scope.socket.on('web-error-login', function() {
+      $scope.submited = false;
+      $timeout(function() {
           $scope.spinner_show = false;
         }, 500);
-        alert("Error en el envio");
-      });
+        alert("Error al intentar iniciar sesión");
     });
   }
 
@@ -111,6 +130,16 @@ angular.module('starter.controllers', [])
 .controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval) {
 
   $scope.accepted = {};
+
+  $scope.test_sesion = function(){
+    console.log("test sesion")
+    window.plugins.imeiplugin.getImei(function(imei){
+      $scope.socket.emit('identify', {
+        'django_id': imei,
+        'usertype': 'CELL'
+      });
+    });
+  }
 
   $scope.reject_pedido = function(id){
 
@@ -149,9 +178,9 @@ angular.module('starter.controllers', [])
             var posOptions = {timeout: 10000, enableHighAccuracy: true};
               $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
                 var lat  = position.coords.latitude;
-                var long = position.coords.longitude;
-                console.log(lat, long);
-                $scope.socket.emit('send-gps', {'lat': lat, 'long': long});
+                var lng = position.coords.longitude;
+                console.log(lat, lng);
+                $scope.socket.emit('send-gps', {'lat': lat, 'lng': lng});
               }, function(err) {
                 $scope.socket.emit('send-gps', {'error': err});
               });
@@ -200,9 +229,9 @@ angular.module('starter.controllers', [])
     var posOptions = {timeout: 10000, enableHighAccuracy: true};
     $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
       var lat  = position.coords.latitude;
-        var long = position.coords.longitude;
-        console.log(lat, long);
-        $scope.socket.emit('reponse-gps', {'lat': lat, 'long': long});
+        var lng = position.coords.longitude;
+        console.log(lat, lng);
+        $scope.socket.emit('reponse-gps', {'lat': lat, 'lng': lng});
     }, function(error){
       console.log(errors)
     })
