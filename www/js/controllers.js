@@ -10,7 +10,7 @@ angular.module('starter.controllers', [])
   //});
   
   $scope.pedidos = [];
-  $scope.logged = false;
+  $rootScope.logged = false;
   $scope.socket_pass = '123456';
   $scope.socket_user = 'user1';
   
@@ -28,6 +28,7 @@ angular.module('starter.controllers', [])
 
   $scope.socket.on('identify', function(message) {
     console.log(message);
+    console.log($rootScope.logged);
     if(!message['ID']){
       console.log($scope.logged);
       if($scope.logged){
@@ -69,7 +70,7 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner, $state, $ionicSideMenuDelegate) {
+.controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner, $state, $ionicSideMenuDelegate, $rootScope) {
   $ionicSideMenuDelegate.canDragContent(false);
 
   $scope.password = "";
@@ -99,7 +100,7 @@ angular.module('starter.controllers', [])
       });
     });
     $scope.socket.on('web-success-login', function() {
-      $scope.logged = true;
+      $rootScope.logged = true;
       $state.go('app.entregas');
     });
     $scope.socket.on('web-error-login', function() {
@@ -128,7 +129,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval) {
-
+  console.log($scope.logged);
   $scope.accepted = {};
 
   $scope.test_sesion = function(){
@@ -234,6 +235,6 @@ angular.module('starter.controllers', [])
         $scope.socket.emit('reponse-gps', {'lat': lat, 'lng': lng});
     }, function(error){
       console.log(errors)
-    })
+    });
   })
 });
