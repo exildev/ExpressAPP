@@ -14,7 +14,7 @@ angular.module('starter.controllers', [])
   $scope.socket_pass = '123456';
   $scope.socket_user = 'user1';
   
-  $scope.socket = io('http://192.168.1.52:4000');
+  $scope.socket = io('http://192.168.0.106:4000');
   $scope.socket.emit('i-am', 'CELL');
 
   document.addEventListener('deviceready', function() {
@@ -28,10 +28,8 @@ angular.module('starter.controllers', [])
 
   $scope.socket.on('identify', function(message) {
     console.log(message);
-    console.log($rootScope.logged);
     if(!message['ID']){
-      console.log($scope.logged);
-      if($scope.logged){
+      if($rootScope.logged){
         $scope.socket_login();
       }else{
         $state.go('app.playlists');
@@ -91,6 +89,7 @@ angular.module('starter.controllers', [])
     }, 500);
 
     window.plugins.imeiplugin.getImei(function(imei){
+      console.log("enviare el login");
       $scope.socket.emit('web-login', {
         'django_id': imei,
         'usertype': 'CELL',
@@ -175,7 +174,6 @@ angular.module('starter.controllers', [])
         if (!angular.isDefined(intervalGPS)) {
           console.log("entre");
           intervalGPS = $interval(function() {
-            console.log("Estoy en el interval");
             var posOptions = {timeout: 10000, enableHighAccuracy: true};
               $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
                 var lat  = position.coords.latitude;

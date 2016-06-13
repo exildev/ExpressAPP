@@ -50,6 +50,7 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'angular
         }
       }
     })
+
     .state('app.playlists', {
       url: '/playlists',
       views: {
