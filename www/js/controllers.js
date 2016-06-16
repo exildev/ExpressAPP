@@ -8,13 +8,16 @@ angular.module('starter.controllers', [])
   // listen for the $ionicView.enter event:
   //$scope.$on('$ionicView.enter', function(e) {
   //});
+
   
+  $scope.message = null;
+  $scope.send_to = null;
   $scope.pedidos = [];
   $rootScope.logged = false;
   $scope.socket_pass = '123456';
   $scope.socket_user = 'user1';
   
-  $scope.socket = io('http://192.168.0.106:4000');
+  $scope.socket = io('http://192.168.1.52:4000');
   $scope.socket.emit('i-am', 'CELL');
 
   document.addEventListener('deviceready', function() {
@@ -35,8 +38,21 @@ angular.module('starter.controllers', [])
         $state.go('app.playlists');
       }
     }else{
-      console.log("tales pascualitos");
+      if($scope.send_to && $scope.message){
+        window.plugins.imeiplugin.getImei(function(imei){
+          $scope.message['django_id'] = imei;
+          $scope.message['usertype'] = 'CELL';
+          $scope.socket.emit($scope.send_to, $scope.message);
+          $scope.message = null;
+          $scope.send_to = null;
+        });
+      }
     }
+  });
+
+  $scope.socket.on('no-session', function(){
+    $rootScope.logged = false;
+    $state.go('app.playlists');
   });
 
   /*$rootScope.$on('$cordovaLocalNotification:click',
@@ -44,6 +60,19 @@ angular.module('starter.controllers', [])
       console.log(event, notification, state);
     }
   );*/
+
+  $scope.emit_message = function(send_to, message){
+    console.log("msg enqued");
+    $scope.send_to = send_to;
+    $scope.message = message;
+    window.plugins.imeiplugin.getImei(function(imei){
+      $scope.socket.emit('identify', {
+        'django_id': imei,
+        'usertype': 'CELL'
+      });
+    });
+  }
+  
   $scope.socket_login = function(){
     window.plugins.imeiplugin.getImei(function(imei){
       $scope.socket.emit('login', {
@@ -55,15 +84,16 @@ angular.module('starter.controllers', [])
       });
     });
     $scope.socket.on('success-login', function() {
-      $scope.logged = true;
-      $state.go('app.entregas');
+      window.plugins.imeiplugin.getImei(function(imei){
+        $scope.message['django_id'] = imei;
+        $scope.message['usertype'] = 'CELL';
+        $scope.socket.emit($scope.send_to, $scope.message);
+        $scope.message = null;
+        $scope.send_to = null;
+      });
     });
     $scope.socket.on('error-login', function() {
-      $scope.submited = false;
-      $timeout(function() {
-          $scope.spinner_show = false;
-        }, 500);
-        alert("Error al intentar iniciar sesión");
+      alert("Error al intentar iniciar sesión");
     });
   }
 })
@@ -169,7 +199,7 @@ angular.module('starter.controllers', [])
     var values = $scope.pedidos.filter(f_p);
     if(values){
       window.plugins.imeiplugin.getImei(function(imei){
-        $scope.socket.emit('accept-pedido', {'pedido_id': id, 'cell_id': imei});
+        $scope.emit_message('accept-pedido', {'pedido_id': id, 'cell_id': imei});
         $scope.accepted[id] = true;
         if (!angular.isDefined(intervalGPS)) {
           console.log("entre");
@@ -179,9 +209,9 @@ angular.module('starter.controllers', [])
                 var lat  = position.coords.latitude;
                 var lng = position.coords.longitude;
                 console.log(lat, lng);
-                $scope.socket.emit('send-gps', {'lat': lat, 'lng': lng});
+                $scope.emit_message('send-gps', {'lat': lat, 'lng': lng});
               }, function(err) {
-                $scope.socket.emit('send-gps', {'error': err});
+                $scope.emit_message('send-gps', {'error': err});
               });
           }, 10000);
         };
