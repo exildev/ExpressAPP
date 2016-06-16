@@ -160,6 +160,7 @@ angular.module('starter.controllers', [])
 .controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval) {
   console.log($scope.logged);
   $scope.accepted = {};
+  $scope.intervalGPS = undefined;
 
   $scope.test_sesion = function(){
     console.log("test sesion")
@@ -191,6 +192,23 @@ angular.module('starter.controllers', [])
     }
   }
 
+  $scope.start_gps = function(){
+    console.log("start gps");
+    if (!angular.isDefined($scope.intervalGPS)) {
+      intervalGPS = $interval(function() {
+        var posOptions = {timeout: 10000, enableHighAccuracy: true};
+          $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+            var lat  = position.coords.latitude;
+            var lng = position.coords.longitude;
+            console.log(lat, lng);
+            $scope.emit_message('send-gps', {'lat': lat, 'lng': lng});
+          }, function(err) {
+            $scope.emit_message('send-gps', {'error': err});
+          });
+      }, 10000);
+    };
+  }
+
   $scope.accept_pedido = function(id){
     var intervalGPS;
     var f_p = function(p){
@@ -201,20 +219,7 @@ angular.module('starter.controllers', [])
       window.plugins.imeiplugin.getImei(function(imei){
         $scope.emit_message('accept-pedido', {'pedido_id': id, 'cell_id': imei});
         $scope.accepted[id] = true;
-        if (!angular.isDefined(intervalGPS)) {
-          console.log("entre");
-          intervalGPS = $interval(function() {
-            var posOptions = {timeout: 10000, enableHighAccuracy: true};
-              $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-                var lat  = position.coords.latitude;
-                var lng = position.coords.longitude;
-                console.log(lat, lng);
-                $scope.emit_message('send-gps', {'lat': lat, 'lng': lng});
-              }, function(err) {
-                $scope.emit_message('send-gps', {'error': err});
-              });
-          }, 10000);
-        };
+        $scope.start_gps();
       });
       $cordovaLocalNotification.cancel(id).then(function (result) {
         console.log("notificacion borrada");
@@ -266,7 +271,11 @@ angular.module('starter.controllers', [])
     });
   });
 
-  $scope.socket.on('asignar-pedido', function(pedido) {
-    alert('se asigno un pedido nuevo');
+  $scope.socket.on('asignar-pedido', function(message) {
+    console.log(message);
+    $scope.pedidos.push(message);
+    $scope.accepted[message.id] = true;
+    $scope.$apply();
+    $scope.start_gps();
   });
 });
