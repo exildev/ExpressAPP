@@ -17,7 +17,7 @@ angular.module('starter.controllers', [])
   $scope.socket_pass = '123456';
   $scope.socket_user = 'user1';
   
-  $scope.socket = io('http://192.168.1.52:4000');
+  $scope.socket = io('http://192.168.0.103:4000');
   $scope.socket.emit('i-am', 'CELL');
 
   document.addEventListener('deviceready', function() {
@@ -264,5 +264,9 @@ angular.module('starter.controllers', [])
     }, function(error){
       console.log(errors)
     });
-  })
+  });
+
+  $scope.socket.on('asignar-pedido', function(pedido) {
+    alert('se asigno un pedido nuevo');
+  });
 });
