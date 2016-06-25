@@ -17,7 +17,7 @@ angular.module('starter.controllers', [])
   $scope.socket_pass = '123456';
   $scope.socket_user = 'user1';
   
-  $scope.socket = io('http://192.168.0.100:4000');
+  $scope.socket = io('http://192.168.0.109:4000');
   $scope.socket.emit('i-am', 'CELL');
 
   document.addEventListener('deviceready', function() {
@@ -157,7 +157,7 @@ angular.module('starter.controllers', [])
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
 
-.controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval) {
+.controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval, Camera) {
   console.log($scope.logged);
   $scope.accepted = {};
   $scope.intervalGPS = undefined;
@@ -225,6 +225,49 @@ angular.module('starter.controllers', [])
         console.log("notificacion borrada");
       });
     }
+  }
+
+  $scope.confirmar = function(){
+    var options = {
+         quality : 75,
+         targetWidth: 200,
+         targetHeight: 200,
+         sourceType: 1
+    };
+
+    Camera.getPicture(options).then(function(imageData) {
+       console.log(imageData);
+       $scope.uploadImage(imageData);
+    }, function(err) {
+       console.log(err);
+    });
+  }
+
+  $scope.uploadImage = function(fileURL){
+    var win = function (r) {
+      console.log("Code = " + r.responseCode);
+      console.log("Response = " + r.response);
+      console.log("Sent = " + r.bytesSent);
+    }
+
+    var fail = function (error) {
+      alert("An error has occurred: Code = " + error.code);
+      console.log("upload error source " + error.source);
+      console.log("upload error target " + error.target);
+    }
+
+    var options = new FileUploadOptions();
+    options.fileKey = "confirmacion";
+    options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+
+    var params = {};
+    params.value1 = "test";
+    params.value2 = "param";
+
+    options.params = params;
+
+    var ft = new FileTransfer();
+    ft.upload(fileURL, encodeURI("http://192.168.0.109:4000/upload"), win, fail, options);
   }
 
   $scope.socket.on('notify-pedido', function(pedido) {
