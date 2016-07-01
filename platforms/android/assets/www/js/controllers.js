@@ -8,8 +8,7 @@ angular.module('starter.controllers', [])
   // listen for the $ionicView.enter event:
   //$scope.$on('$ionicView.enter', function(e) {
   //});
-
-  
+  $scope.messages = [];
   $scope.message = null;
   $scope.send_to = null;
   $scope.pedidos = [];
@@ -18,7 +17,6 @@ angular.module('starter.controllers', [])
   $scope.socket_user = 'user1';
   
   $scope.socket = io('http://192.168.0.109:4000');
-  $scope.socket.emit('i-am', 'CELL');
 
   document.addEventListener('deviceready', function() {
     window.plugins.imeiplugin.getImei(function(imei){
@@ -42,12 +40,22 @@ angular.module('starter.controllers', [])
         window.plugins.imeiplugin.getImei(function(imei){
           $scope.message['django_id'] = imei;
           $scope.message['usertype'] = 'CELL';
-          $scope.socket.emit($scope.send_to, $scope.message);
-          $scope.message = null;
-          $scope.send_to = null;
+          $scope.send_messages();
         });
       }
     }
+  });
+
+  $scope.socket.on('success-login', function() {
+    window.plugins.imeiplugin.getImei(function(imei){
+      $scope.message['django_id'] = imei;
+      $scope.message['usertype'] = 'CELL';
+      $scope.send_messages();
+    });
+  });
+
+  $scope.socket.on('error-login', function() {
+    alert("Error al intentar iniciar sesión");
   });
 
   $scope.socket.on('no-session', function(){
@@ -61,10 +69,24 @@ angular.module('starter.controllers', [])
     }
   );*/
 
+  $scope.send_messages = function() {
+    for (var i = $scope.messages.length - 1; i >= 0; i--) {
+      var message = $scope.messages[i];
+      console.log("voy a mandar", message);
+      window.plugins.imeiplugin.getImei(function(imei){
+        message.message['django_id'] = imei;
+        message.message['usertype'] = 'CELL';
+        $scope.socket.emit(message.send_to, message.message);
+      });
+    };
+    $scope.messages = [];
+  }
+
   $scope.emit_message = function(send_to, message){
     console.log("msg enqued");
     $scope.send_to = send_to;
     $scope.message = message;
+    $scope.messages.push({'send_to': send_to, 'message': message});
     window.plugins.imeiplugin.getImei(function(imei){
       $scope.socket.emit('identify', {
         'django_id': imei,
@@ -82,18 +104,6 @@ angular.module('starter.controllers', [])
         'password': $scope.socket_pass,
         'username': $scope.socket_user
       });
-    });
-    $scope.socket.on('success-login', function() {
-      window.plugins.imeiplugin.getImei(function(imei){
-        $scope.message['django_id'] = imei;
-        $scope.message['usertype'] = 'CELL';
-        $scope.socket.emit($scope.send_to, $scope.message);
-        $scope.message = null;
-        $scope.send_to = null;
-      });
-    });
-    $scope.socket.on('error-login', function() {
-      alert("Error al intentar iniciar sesión");
     });
   }
 })
@@ -245,7 +255,7 @@ angular.module('starter.controllers', [])
     alert('recojiendo');
   }
 
-  $scope.confirmar = function(pedido_id){
+  $scope.confirmar = function(pedido_id, tipo){
     var options = {
          quality : 75,
          targetWidth: 800,
@@ -255,13 +265,13 @@ angular.module('starter.controllers', [])
     $scope.stop_gps();
     Camera.getPicture(options).then(function(imageData) {
        console.log(imageData);
-       $scope.uploadImage(imageData, pedido_id);
+       $scope.uploadImage(imageData, pedido_id, tipo);
     }, function(err) {
        console.log(err);
     });
   }
 
-  $scope.uploadImage = function(fileURL, pedido_id){
+  $scope.uploadImage = function(fileURL, pedido_id, tipo){
     var win = function (r) {
       console.log("Code = " + r.responseCode);
       console.log("Response = " + r.response);
@@ -284,6 +294,7 @@ angular.module('starter.controllers', [])
       params.django_id = imei;
       params.usertype = 'CELL';
       params.pedido = pedido_id;
+      params.tipo = tipo;
       options.params = params;
 
       var ft = new FileTransfer();
@@ -297,8 +308,8 @@ angular.module('starter.controllers', [])
     $scope.$apply();
     $cordovaLocalNotification.schedule({
       id: pedido.id,
-      title: "Pedido para la " + pedido.pedido.cliente.dirreccion,
-      text: 'para reocojer en la tienda ' + pedido.pedido.tienda,
+      title: "Pedido para la " + pedido.cliente.direccion,
+      text: 'para reocojer en la tienda ' + pedido.tienda[0].referencia,
     });
   });
   
@@ -326,10 +337,9 @@ angular.module('starter.controllers', [])
   $scope.socket.on('request-gps', function(data){
     var posOptions = {timeout: 10000, enableHighAccuracy: true};
     $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-      var lat  = position.coords.latitude;
+        var lat  = position.coords.latitude;
         var lng = position.coords.longitude;
-        console.log(lat, lng);
-        $scope.socket.emit('reponse-gps', {'lat': lat, 'lng': lng});
+        $scope.emit_message('reponse-gps', {'lat': lat, 'lng': lng , pedido: data});
     }, function(error){
       console.log(errors)
     });
@@ -347,7 +357,11 @@ angular.module('starter.controllers', [])
     $scope.$apply();
     $scope.start_gps();
     window.plugins.imeiplugin.getImei(function(imei){
-      $scope.emit_message('pedido-recibido', {'pedido_id': message.id, 'cell_id': imei});
+      if (message.tipo == 1) {
+        $scope.emit_message('pedido-recibido', {'pedido_id': message.id, 'cell_id': imei});
+      }else{
+        $scope.emit_message('accept-pedido', {'pedido_id': message.id, 'cell_id': imei});
+      }
     });
   });
 });
