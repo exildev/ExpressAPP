@@ -11,16 +11,19 @@
 				<ul class="collapsible" data-collapsible="accordion" watch>
 					<li ng-repeat="value in pedidos">
 						<div class="collapsible-header">
-							<i class="mdi-maps-directions"></i>{{value.pedido.cliente.dirreccion}}
+							<i class="mdi-maps-directions"></i>{{value.info.cliente.direccion}}
 						</div>
 						<div class="collapsible-body">
 							<div class="collection">
-							 	<a class="collection-item">Cliente: {{value.pedido.cliente.nombre}} {{value.cliente.apellidos}}</a>
-							    <a class="collection-item">Tienda: {{value.pedido.tienda}}</a>
+							 	<a class="collection-item">Cliente: {{value.info.cliente.nombre}} {{value.info.cliente.apellidos}}</a>
+							    <a class="collection-item">Tienda: {{value.empresa.referencia}}</a>
+							    <a class="collection-item">direccion tienda: {{value.empresa.direccion}}</a>
+							    <a class="collection-item">Total: ${{value.info.total_pedido}}</a>
 							    <div class="collection-item">
-							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;" ng-click="reject_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true"><i class="mdi-action-done"></i>Rechazar</a>
-							    	<a class="waves-effect waves-light btn green" style="width:49%; padding: 0 1rem;" ng-click="accept_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true"><i class="mdi-action-done"></i>Aceptar</a>
-							    	<a class="waves-effect waves-light btn green right" style="width:49%; padding: 0 1rem;" ng-show="accepted[{{value.id}}] == true" ng-click="confirmar()"><i class="mdi-action-done"></i>Confirmar</a>
+							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;" ng-click="reject_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true && picked[{{value.id}}] != true"><i class="mdi-action-done"></i>Rechazar</a>
+							    	<a class="waves-effect waves-light btn green" style="width:49%; padding: 0 1rem;" ng-click="accept_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true && picked[{{value.id}}] != true"><i class="mdi-action-done"></i>Aceptar</a>
+							    	<a class="waves-effect waves-light btn green right" style="width:49%; padding: 0 1rem;" ng-show="accepted[{{value.id}}] == true" ng-click="recojer({{value.id}}, {{value.tipo}})"><i class="mdi-action-done"></i>Recojido</a>
+							    	<a class="waves-effect waves-light btn green right" style="width:49%; padding: 0 1rem;" ng-show="picked[{{value.id}}] == true" ng-click="confirmar({{value.id}})"><i class="mdi-action-done"></i>Entregado</a>
 							    </div>
 							</div>
 						</div>

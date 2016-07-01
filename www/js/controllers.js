@@ -160,6 +160,7 @@ angular.module('starter.controllers', [])
 .controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval, Camera) {
   console.log($scope.logged);
   $scope.accepted = {};
+  $scope.picked = {};
   $scope.intervalGPS = undefined;
 
   $scope.test_sesion = function(){
@@ -195,7 +196,7 @@ angular.module('starter.controllers', [])
   $scope.start_gps = function(){
     console.log("start gps");
     if (!angular.isDefined($scope.intervalGPS)) {
-      intervalGPS = $interval(function() {
+      $scope.intervalGPS = $interval(function() {
         var posOptions = {timeout: 10000, enableHighAccuracy: true};
           $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
             var lat  = position.coords.latitude;
@@ -205,8 +206,16 @@ angular.module('starter.controllers', [])
           }, function(err) {
             $scope.emit_message('send-gps', {'error': err});
           });
-      }, 10000);
+      }, 30000);
     };
+  }
+
+  $scope.stop_gps = function() {
+    alert("parare el gps");
+    if (angular.isDefined($scope.intervalGPS)) {
+      $interval.cancel($scope.intervalGPS);
+      $scope.intervalGPS = undefined;
+    }
   }
 
   $scope.accept_pedido = function(id){
@@ -227,27 +236,37 @@ angular.module('starter.controllers', [])
     }
   }
 
-  $scope.confirmar = function(){
+  $scope.recojer = function (id, tipo) {
+    delete $scope.accepted[id];
+    $scope.picked[id] = true;
+    window.plugins.imeiplugin.getImei(function(imei){
+      $scope.emit_message('recojer-pedido', {'pedido_id': id, 'cell_id': imei, 'tipo': tipo});
+    });
+    alert('recojiendo');
+  }
+
+  $scope.confirmar = function(pedido_id){
     var options = {
          quality : 75,
-         targetWidth: 200,
-         targetHeight: 200,
+         targetWidth: 800,
+         targetHeight: 800,
          sourceType: 1
     };
-
+    $scope.stop_gps();
     Camera.getPicture(options).then(function(imageData) {
        console.log(imageData);
-       $scope.uploadImage(imageData);
+       $scope.uploadImage(imageData, pedido_id);
     }, function(err) {
        console.log(err);
     });
   }
 
-  $scope.uploadImage = function(fileURL){
+  $scope.uploadImage = function(fileURL, pedido_id){
     var win = function (r) {
       console.log("Code = " + r.responseCode);
       console.log("Response = " + r.response);
       console.log("Sent = " + r.bytesSent);
+      alert("Response = " + r.response);
     }
 
     var fail = function (error) {
@@ -261,13 +280,15 @@ angular.module('starter.controllers', [])
     options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
 
     var params = {};
-    params.value1 = "test";
-    params.value2 = "param";
+    window.plugins.imeiplugin.getImei(function(imei){
+      params.django_id = imei;
+      params.usertype = 'CELL';
+      params.pedido = pedido_id;
+      options.params = params;
 
-    options.params = params;
-
-    var ft = new FileTransfer();
-    ft.upload(fileURL, encodeURI("http://192.168.0.109:4000/upload"), win, fail, options);
+      var ft = new FileTransfer();
+      ft.upload(fileURL, encodeURI("http://192.168.0.109:4000/upload"), win, fail, options);
+    });
   }
 
   $scope.socket.on('notify-pedido', function(pedido) {
@@ -316,9 +337,17 @@ angular.module('starter.controllers', [])
 
   $scope.socket.on('asignar-pedido', function(message) {
     console.log(message);
+    if (message.tipo == 1) {
+      message.info.cliente = message.cliente[0];
+      message.empresa = message.tienda[0];
+      message.info.total_pedido = message.total
+    };
     $scope.pedidos.push(message);
     $scope.accepted[message.id] = true;
     $scope.$apply();
     $scope.start_gps();
+    window.plugins.imeiplugin.getImei(function(imei){
+      $scope.emit_message('pedido-recibido', {'pedido_id': message.id, 'cell_id': imei});
+    });
   });
 });
