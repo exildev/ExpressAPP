@@ -42,6 +42,12 @@
         },
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     },
     "dependent_plugins": {
@@ -49,6 +55,9 @@
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
         "cordova-plugin-app-event": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-file": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     }
