@@ -1,1 +1,6 @@
 /* Empty. Add your own CSS if you like */
+
+.mt-row{
+  display: block;
+  padding: 0;
+}

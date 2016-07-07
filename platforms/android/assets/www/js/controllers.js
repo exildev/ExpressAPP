@@ -36,22 +36,12 @@ angular.module('starter.controllers', [])
         $state.go('app.playlists');
       }
     }else{
-      if($scope.send_to && $scope.message){
-        window.plugins.imeiplugin.getImei(function(imei){
-          $scope.message['django_id'] = imei;
-          $scope.message['usertype'] = 'CELL';
-          $scope.send_messages();
-        });
-      }
+      $scope.send_messages();
     }
   });
 
   $scope.socket.on('success-login', function() {
-    window.plugins.imeiplugin.getImei(function(imei){
-      $scope.message['django_id'] = imei;
-      $scope.message['usertype'] = 'CELL';
-      $scope.send_messages();
-    });
+    $scope.send_messages();
   });
 
   $scope.socket.on('error-login', function() {
@@ -70,22 +60,20 @@ angular.module('starter.controllers', [])
   );*/
 
   $scope.send_messages = function() {
-    for (var i = $scope.messages.length - 1; i >= 0; i--) {
-      var message = $scope.messages[i];
-      console.log("voy a mandar", message);
-      window.plugins.imeiplugin.getImei(function(imei){
+    window.plugins.imeiplugin.getImei(function(imei){
+      for (var i = $scope.messages.length - 1; i >= 0; i--) {
+        var message = $scope.messages[i];
         message.message['django_id'] = imei;
         message.message['usertype'] = 'CELL';
+        console.log("voy a mandar", message);
         $scope.socket.emit(message.send_to, message.message);
-      });
-    };
-    $scope.messages = [];
+      }
+      $scope.messages = [];
+    });
   }
 
   $scope.emit_message = function(send_to, message){
     console.log("msg enqued");
-    $scope.send_to = send_to;
-    $scope.message = message;
     $scope.messages.push({'send_to': send_to, 'message': message});
     window.plugins.imeiplugin.getImei(function(imei){
       $scope.socket.emit('identify', {
@@ -110,6 +98,21 @@ angular.module('starter.controllers', [])
 
 .controller('PlaylistsCtrl', function($scope, $http, $timeout, $cordovaBarcodeScanner, $state, $ionicSideMenuDelegate, $rootScope) {
   $ionicSideMenuDelegate.canDragContent(false);
+
+  $scope.h = window.innerHeight;
+  $scope.keyStyle = {};
+
+  window.addEventListener('native.keyboardshow', function(){
+    $scope.keyStyle = {height: $scope.h + 'px'};
+    $scope.focus = true;
+    $scope.$apply();
+  });
+
+  window.addEventListener('native.keyboardhide', function(){
+    $scope.keyStyle = {};
+    $scope.focus = false;
+    $scope.$apply();
+  });
 
   $scope.password = "";
   $scope.pressKey = function(number) {
@@ -221,7 +224,6 @@ angular.module('starter.controllers', [])
   }
 
   $scope.stop_gps = function() {
-    alert("parare el gps");
     if (angular.isDefined($scope.intervalGPS)) {
       $interval.cancel($scope.intervalGPS);
       $scope.intervalGPS = undefined;
@@ -252,7 +254,6 @@ angular.module('starter.controllers', [])
     window.plugins.imeiplugin.getImei(function(imei){
       $scope.emit_message('recojer-pedido', {'pedido_id': id, 'cell_id': imei, 'tipo': tipo});
     });
-    alert('recojiendo');
   }
 
   $scope.confirmar = function(pedido_id, tipo){
@@ -262,7 +263,6 @@ angular.module('starter.controllers', [])
          targetHeight: 800,
          sourceType: 1
     };
-    $scope.stop_gps();
     Camera.getPicture(options).then(function(imageData) {
        console.log(imageData);
        $scope.uploadImage(imageData, pedido_id, tipo);
@@ -276,7 +276,19 @@ angular.module('starter.controllers', [])
       console.log("Code = " + r.responseCode);
       console.log("Response = " + r.response);
       console.log("Sent = " + r.bytesSent);
-      alert("Response = " + r.response);
+      var f_p = function(p){
+        return p.id == pedido_id && p.tipo == tipo;
+      }
+      var values = $scope.pedidos.filter(f_p);
+      if(values){
+        var index = $scope.pedidos.indexOf(values[0]);
+        delete $scope.pedidos[index];
+        $scope.pedidos.splice(index, 1);
+        $scope.$apply();
+        if ($scope.pedidos.length <=0) {
+          $scope.stop_gps();
+        };
+      }
     }
 
     var fail = function (error) {
@@ -302,13 +314,42 @@ angular.module('starter.controllers', [])
     });
   }
 
+  $scope.socket.on('modificar-pedido', function(message) {
+
+    message.info.cliente = message.cliente[0];
+    message.empresa = message.tienda[0];
+    message.info.total_pedido = message.total;
+
+    var f_p = function(p){
+      return p.id == message.id && p.tipo == message.tipo;
+    }
+    var values = $scope.pedidos.filter(f_p);
+    if(values){
+      var index = $scope.pedidos.indexOf(values[0]);
+      if (index < 0) {
+        $scope.pedidos.push(message);
+      }else{
+        $scope.pedidos[index] = message;
+        $scope.accepted[message.id] = true;
+      }
+    }else{
+      $scope.pedidos.push(message);
+      $scope.accepted[message.id] = true;
+    }
+    $scope.$apply();
+    $scope.start_gps();
+    $scope.emit_message('visit-message',{message_id: message.message_id});
+  });
+
   $scope.socket.on('notify-pedido', function(pedido) {
     console.log(pedido)
+    pedido.empresa = pedido.tienda[0];
     $scope.pedidos.push(pedido);
     $scope.$apply();
+    $scope.emit_message('visit-message',{message_id: pedido.message_id});
     $cordovaLocalNotification.schedule({
       id: pedido.id,
-      title: "Pedido para la " + pedido.cliente.direccion,
+      title: "Pedido para la " + pedido.info.cliente.direccion,
       text: 'para reocojer en la tienda ' + pedido.tienda[0].referencia,
     });
   });
@@ -332,9 +373,11 @@ angular.module('starter.controllers', [])
         console.log("notificacion borrada");
       });
     }
+    $scope.emit_message('visit-message',{message_id: pedido.message_id});
   });
 
   $scope.socket.on('request-gps', function(data){
+    console.log("request-gps");
     var posOptions = {timeout: 10000, enableHighAccuracy: true};
     $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
         var lat  = position.coords.latitude;
@@ -343,6 +386,7 @@ angular.module('starter.controllers', [])
     }, function(error){
       console.log(errors)
     });
+    $scope.emit_message('visit-message',{message_id: data.message_id, 'emit': 'reponse-gps'});
   });
 
   $scope.socket.on('asignar-pedido', function(message) {
@@ -351,11 +395,14 @@ angular.module('starter.controllers', [])
       message.info.cliente = message.cliente[0];
       message.empresa = message.tienda[0];
       message.info.total_pedido = message.total
-    };
+    }else{
+      message.empresa = message.tienda[0];
+    }
     $scope.pedidos.push(message);
     $scope.accepted[message.id] = true;
     $scope.$apply();
     $scope.start_gps();
+    $scope.emit_message('visit-message',{message_id: message.message_id});
     window.plugins.imeiplugin.getImei(function(imei){
       if (message.tipo == 1) {
         $scope.emit_message('pedido-recibido', {'pedido_id': message.id, 'cell_id': imei});
@@ -363,5 +410,9 @@ angular.module('starter.controllers', [])
         $scope.emit_message('accept-pedido', {'pedido_id': message.id, 'cell_id': imei});
       }
     });
+  });
+
+  $scope.socket.on('trasladar-pedido', function(message) {
+    alert('trasladar-pedido');
   });
 });

@@ -1,41 +1,33 @@
 <ion-view class="green lighten-4" hide-nav-bar="true">
-    <div id="login-page" class="row">
+    <link href="css/login.css" type="text/css" rel="stylesheet" media="screen,projection">
+    <div id="login-page" class="row" ng-style="keyStyle">
       <div class="col s12 z-depth-4 card-panel">
-        <form class="login-form" ng-submit="doForm()" ng-class="{'hide-keyboard':submited}">
-          <div class="row header">
-            <div class="input-field col s12 center">
-              <img src="images/avatar.jpg" alt="" class="circle responsive-img valign" ng-class="{'profile-image-login':!submited, 'img-login-big':submited}">
-              <h4 class="header">John Doe</h4>
+
+        <div class="row header">
+          <div class="input-field col s12 center">
+            <img src="images/avatar.jpg" alt="" class="circle responsive-img valign" ng-class="{'profile-image-login':!submited, 'img-login-big':submited}">
+            <h4 class="header">John Doe</h4>
+          </div>
+        </div>
+
+        <div class="row mt-row" ng-show="!submited">
+          <div class="col s12" id="pass-container">
+            <i class="mdi-content-backspace" ng-click="erase()" on-hold="eraseAll()"></i>
+            <input type="password" name="name" ng-model="password">
+          </div>
+        </div>
+
+        <div class="buttons row mt-row" ng-show="!focus && !submited">
+          <div class="col s4 gps-container">
+            <span class="margin ultra-small left"><a ng-click="leerQR()">GPS-QR</a></span>
             </div>
-          </div>
-          <div class="row keyboard">
-              <table>
-                <tbody>
-                  <tr>
-                    <td colspan="3">
-                      <div class="col s12" id="pass-container">
-                          <i class="mdi-content-backspace" ng-click="erase()" on-hold="eraseAll()"></i>
-                          <input type="password" name="name" ng-model="password">
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan="3" class="controls">
-                      <div class="col s4 gps-container">
-                        <span class="margin ultra-small left"><a ng-click="leerQR()">GPS-QR</a></span>
-                      </div>
-                      <div class="col s4">
-                        <a class="btn-floating btn-large indigo" angular-ripple ng-click="login()">
-                          <i class="mdi-content-send"></i>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <ion-spinner icon="dots" ng-show="spinner_show"></ion-spinner>
-          </div>
-        </form>
-      </div>
+            <div class="col s4">
+              <a class="btn-floating btn-large indigo sender" angular-ripple ng-click="login()">
+                <i class="mdi-content-send"></i>
+              </a>
+            </div>
+        </div>
+        <ion-spinner icon="dots" ng-show="spinner_show"></ion-spinner>
+      </div-->
     </div>
 </ion-view>
