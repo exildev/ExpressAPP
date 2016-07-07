@@ -402,7 +402,7 @@ angular.module('starter.controllers', [])
     $scope.accepted[message.id] = true;
     $scope.$apply();
     $scope.start_gps();
-    $scope.emit_message('visit-message',{message_id: message.message_id});
+    $scope.emit_message('visit-message',{message_id: message.message_id, 'emit': message.emit});
     window.plugins.imeiplugin.getImei(function(imei){
       if (message.tipo == 1) {
         $scope.emit_message('pedido-recibido', {'pedido_id': message.id, 'cell_id': imei});
@@ -413,6 +413,18 @@ angular.module('starter.controllers', [])
   });
 
   $scope.socket.on('trasladar-pedido', function(message) {
-    alert('trasladar-pedido');
+    var f_p = function(p){
+      return p.id == message.id && p.tipo == message.tipo;
+    }
+    var values = $scope.pedidos.filter(f_p);
+    if(values){
+      var index = $scope.pedidos.indexOf(values[0]);
+      $scope.pedidos.splice(index, 1);
+      $scope.$apply();
+      if ($scope.pedidos.length <=0) {
+        $scope.stop_gps();
+      };
+    }
+
   });
 });
