@@ -22,6 +22,7 @@
 							    <div class="collection-item">
 							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;" ng-click="reject_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true && picked[{{value.id}}] != true">Rechazar</a>
 							    	<a class="waves-effect waves-light btn green" style="width:49%; padding: 0 1rem;" ng-click="accept_pedido({{value.id}})" ng-show="accepted[{{value.id}}] != true && picked[{{value.id}}] != true">Aceptar</a>
+							    	<a class="waves-effect waves-light btn red" style="width:49%; padding: 0 1rem;" ng-click="cancelar({{value.id}}, {{value.tipo}})" ng-show="accepted[{{value.id}}] == true || picked[{{value.id}}] == true">Cancelar</a>
 							    	<a class="waves-effect waves-light btn green right" style="width:49%; padding: 0 1rem;margin-bottom: 10px;" ng-show="accepted[{{value.id}}] == true" ng-click="recojer({{value.id}}, {{value.tipo}})">Recojido</a>
 							    	<a class="waves-effect waves-light btn green right" style="width:49%; padding: 0 1rem;margin-bottom: 10px;" ng-show="picked[{{value.id}}] == true" ng-click="confirmar({{value.id}}, {{value.tipo}})">Entregado</a>
 							    </div>

@@ -271,6 +271,21 @@ angular.module('starter.controllers', [])
     });
   }
 
+  $scope.cancelar = function(pedido_id, tipo){
+    var options = {
+         quality : 75,
+         targetWidth: 800,
+         targetHeight: 800,
+         sourceType: 1
+    };
+    Camera.getPicture(options).then(function(imageData) {
+       console.log(imageData);
+       $scope.uploadCancelImage(imageData, pedido_id, tipo);
+    }, function(err) {
+       console.log(err);
+    });
+  }
+
   $scope.uploadImage = function(fileURL, pedido_id, tipo){
     var win = function (r) {
       console.log("Code = " + r.responseCode);
@@ -282,7 +297,7 @@ angular.module('starter.controllers', [])
       var values = $scope.pedidos.filter(f_p);
       if(values){
         var index = $scope.pedidos.indexOf(values[0]);
-        delete $scope.pedidos[index];
+        $scope.emit_message('delete-message',{message_id: $scope.pedidos[index].message_id});
         $scope.pedidos.splice(index, 1);
         $scope.$apply();
         if ($scope.pedidos.length <=0) {
@@ -314,6 +329,49 @@ angular.module('starter.controllers', [])
     });
   }
 
+  $scope.uploadCancelImage = function(fileURL, pedido_id, tipo){
+    var win = function (r) {
+      console.log("Code = " + r.responseCode);
+      console.log("Response = " + r.response);
+      console.log("Sent = " + r.bytesSent);
+      var f_p = function(p){
+        return p.id == pedido_id && p.tipo == tipo;
+      }
+      var values = $scope.pedidos.filter(f_p);
+      if(values){
+        var index = $scope.pedidos.indexOf(values[0]);
+        $scope.emit_message('delete-message',{message_id: $scope.pedidos[index].message_id});
+        $scope.pedidos.splice(index, 1);
+        $scope.$apply();
+        if ($scope.pedidos.length <=0) {
+          $scope.stop_gps();
+        };
+      }
+    }
+
+    var fail = function (error) {
+      alert("An error has occurred: Code = " + error.code);
+      console.log("upload error source " + error.source);
+      console.log("upload error target " + error.target);
+    }
+
+    var options = new FileUploadOptions();
+    options.fileKey = "confirmacion";
+    options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+
+    var params = {};
+    window.plugins.imeiplugin.getImei(function(imei){
+      params.django_id = imei;
+      params.usertype = 'CELL';
+      params.pedido = pedido_id;
+      params.tipo = tipo;
+      options.params = params;
+
+      var ft = new FileTransfer();
+      ft.upload(fileURL, encodeURI("http://192.168.0.109:4000/cancel"), win, fail, options);
+    });
+  }
+
   $scope.socket.on('modificar-pedido', function(message) {
 
     message.info.cliente = message.cliente[0];
@@ -328,17 +386,17 @@ angular.module('starter.controllers', [])
       var index = $scope.pedidos.indexOf(values[0]);
       if (index < 0) {
         $scope.pedidos.push(message);
+        $scope.accepted[message.id] = true;
       }else{
         $scope.pedidos[index] = message;
-        $scope.accepted[message.id] = true;
       }
     }else{
       $scope.pedidos.push(message);
       $scope.accepted[message.id] = true;
     }
-    $scope.$apply();
     $scope.start_gps();
     $scope.emit_message('visit-message',{message_id: message.message_id});
+    $scope.$apply();
   });
 
   $scope.socket.on('notify-pedido', function(pedido) {
@@ -419,12 +477,12 @@ angular.module('starter.controllers', [])
     var values = $scope.pedidos.filter(f_p);
     if(values){
       var index = $scope.pedidos.indexOf(values[0]);
+      $scope.emit_message('delete-message',{message_id: $scope.pedidos[index].message_id});
       $scope.pedidos.splice(index, 1);
       $scope.$apply();
       if ($scope.pedidos.length <=0) {
         $scope.stop_gps();
       };
     }
-
   });
 });
