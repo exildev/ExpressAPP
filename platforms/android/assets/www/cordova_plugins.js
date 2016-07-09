@@ -30,13 +30,6 @@ module.exports = [
         "runs": true
     },
     {
-        "file": "plugins/com.joandilee.imeiplugin/www/imeiplugin.js",
-        "id": "com.joandilee.imeiplugin.imeiplugin",
-        "clobbers": [
-            "imeiplugin"
-        ]
-    },
-    {
         "file": "plugins/cordova-plugin-x-toast/www/Toast.js",
         "id": "cordova-plugin-x-toast.Toast",
         "clobbers": [
@@ -306,6 +299,20 @@ module.exports = [
         "clobbers": [
             "window.FileTransfer"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-sim/www/sim.js",
+        "id": "cordova-plugin-sim.Sim",
+        "merges": [
+            "window.plugins.sim"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-sim/www/android/sim.js",
+        "id": "cordova-plugin-sim.SimAndroid",
+        "merges": [
+            "window.plugins.sim"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -317,7 +324,6 @@ module.exports.metadata =
     "cordova-plugin-statusbar": "2.1.3",
     "cordova-plugin-whitelist": "1.2.2",
     "ionic-plugin-keyboard": "2.2.0",
-    "com.joandilee.imeiplugin": "0.1",
     "cordova-plugin-x-toast": "2.5.1",
     "cordova-plugin-compat": "1.0.0",
     "phonegap-plugin-barcodescanner": "5.0.0",
@@ -327,7 +333,8 @@ module.exports.metadata =
     "cordova-plugin-geolocation": "2.2.0",
     "cordova-plugin-camera": "2.2.0",
     "cordova-plugin-file": "4.2.0",
-    "cordova-plugin-file-transfer": "1.5.1"
+    "cordova-plugin-file-transfer": "1.5.1",
+    "cordova-plugin-sim": "1.2.1"
 };
 // BOTTOM OF METADATA
 });

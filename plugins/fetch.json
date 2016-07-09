@@ -47,14 +47,6 @@
         "is_top_level": true,
         "variables": {}
     },
-    "com.joandilee.imeiplugin": {
-        "source": {
-            "type": "registry",
-            "id": "imeiplugin"
-        },
-        "is_top_level": true,
-        "variables": {}
-    },
     "cordova-plugin-x-toast": {
         "source": {
             "type": "git",
@@ -137,6 +129,14 @@
             "id": "cordova-plugin-file"
         },
         "is_top_level": false,
+        "variables": {}
+    },
+    "cordova-plugin-sim": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-sim"
+        },
+        "is_top_level": true,
         "variables": {}
     }
 }

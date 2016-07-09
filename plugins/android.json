@@ -25,9 +25,6 @@
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
-        "com.joandilee.imeiplugin": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
         "cordova-plugin-x-toast": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
@@ -47,6 +44,9 @@
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
         "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-sim": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     },

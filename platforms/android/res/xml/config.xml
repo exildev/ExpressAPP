@@ -20,9 +20,6 @@
         <param name="android-package" value="io.ionic.keyboard.IonicKeyboard" />
         <param name="onload" value="true" />
     </feature>
-    <feature name="imeiplugin">
-        <param name="android-package" value="com.joandilee.imeiplugin" />
-    </feature>
     <feature name="Toast">
         <param name="android-package" value="nl.xservices.plugins.Toast" />
     </feature>
@@ -44,6 +41,9 @@
     </feature>
     <feature name="FileTransfer">
         <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
+    </feature>
+    <feature name="Sim">
+        <param name="android-package" value="com.pbakondy.Sim" />
     </feature>
     <name>ExpressAPP</name>
     <description>
