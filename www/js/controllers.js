@@ -8,6 +8,7 @@ angular.module('starter.controllers', [])
   // listen for the $ionicView.enter event:
   //$scope.$on('$ionicView.enter', function(e) {
   //});
+  $scope.numero_pedidos = 0;
   $scope.messages = [];
   $scope.message = null;
   $scope.send_to = null;
@@ -15,6 +16,8 @@ angular.module('starter.controllers', [])
   $rootScope.logged = false;
   $scope.socket_pass = '123456';
   $scope.socket_user = 'user1';
+  $scope.nombre = "Express del norte";
+  $scope.foto = "images/avatar.jpg";
   
   $scope.socket = io('http://192.168.0.16:4000');
 
@@ -25,6 +28,9 @@ angular.module('starter.controllers', [])
       $scope.socket.emit('identify', {
         'django_id': imei,
         'usertype': 'CELL',
+      });
+      $scope.socket.emit('get-data', {
+        'cell_id': imei
       });
     }, function(){
       alert("error")
@@ -60,6 +66,17 @@ angular.module('starter.controllers', [])
 
   $scope.socket.on('numero-pedido', function(message){
     $scope.numero_pedidos = message.numero_pedidos;
+    $scope.$apply();
+  });
+
+  $scope.socket.on('get-data', function(message){
+    if (message.nombre) {
+      $scope.nombre = message.nombre + ' ' + message.apellidos
+    };
+
+    if (message.foto) {
+      $scope.foto = message.foto;
+    };
     $scope.$apply();
   });
 

@@ -5,11 +5,10 @@
 
         <div class="row header">
           <div class="input-field col s12 center">
-            <img src="images/avatar.jpg" alt="" class="circle responsive-img valign" ng-class="{'profile-image-login':!submited, 'img-login-big':submited}">
-            <h4 class="header">John Doe</h4>
+            <img src="{{foto}}" alt="" class="circle responsive-img valign" ng-class="{'profile-image-login':!submited, 'img-login-big':submited}">
+            <h4 class="header">{{nombre}}</h4>
           </div>
         </div>
-
         <div class="row mt-row" ng-show="!submited">
           <div class="col s12" id="pass-container">
             <i class="mdi-content-backspace" ng-click="erase()" on-hold="eraseAll()"></i>
