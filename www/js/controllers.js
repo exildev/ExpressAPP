@@ -19,21 +19,17 @@ angular.module('starter.controllers', [])
   $scope.nombre = "Express del norte";
   $scope.foto = "images/avatar.jpg";
   
-  $scope.socket = io('http://192.168.0.16:4000');
+  $scope.socket = io('http://104.236.33.228:4000');
 
 
   document.addEventListener("deviceready", function(){
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      $scope.socket.emit('identify', {
-        'django_id': imei,
-        'usertype': 'CELL',
-      });
-      $scope.socket.emit('get-data', {
-        'cell_id': imei
-      });
-    }, function(){
-      alert("error")
+    var imei = device.uuid;
+    $scope.socket.emit('identify', {
+      'django_id': imei,
+      'usertype': 'CELL',
+    });
+    $scope.socket.emit('get-data', {
+      'cell_id': imei
     });
   }, false);
 
@@ -87,53 +83,41 @@ angular.module('starter.controllers', [])
   );*/
 
   $scope.send_messages = function() {
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      $scope.socket.emit('numero-pedido', {
-        'django_id': imei,
-        'usertype': 'CELL',
-        'cell_id': imei
-      });
-
-      for (var i = $scope.messages.length - 1; i >= 0; i--) {
-        var message = $scope.messages[i];
-        message.message['django_id'] = imei;
-        message.message['usertype'] = 'CELL';
-        console.log("voy a mandar", message);
-        $scope.socket.emit(message.send_to, message.message);
-      }
-      $scope.messages = [];
-    },function(){
-      alert("error");
+    var imei = device.uuid;
+    $scope.socket.emit('numero-pedido', {
+      'django_id': imei,
+      'usertype': 'CELL',
+      'cell_id': imei
     });
+
+    for (var i = $scope.messages.length - 1; i >= 0; i--) {
+      var message = $scope.messages[i];
+      message.message['django_id'] = imei;
+      message.message['usertype'] = 'CELL';
+      console.log("voy a mandar", message);
+      $scope.socket.emit(message.send_to, message.message);
+    }
+    $scope.messages = [];
   }
 
   $scope.emit_message = function(send_to, message){
     console.log("msg enqued");
     $scope.messages.push({'send_to': send_to, 'message': message});
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      $scope.socket.emit('identify', {
-        'django_id': imei,
-        'usertype': 'CELL'
-      });
-    }, function(){
-      alert("error");
+    var imei = device.uuid;
+    $scope.socket.emit('identify', {
+      'django_id': imei,
+      'usertype': 'CELL'
     });
   }
   
   $scope.socket_login = function(){
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      $scope.socket.emit('login', {
-        'django_id': imei,
-        'usertype': 'CELL',
-        'web_password': $scope.password,
-        'password': $scope.socket_pass,
-        'username': $scope.socket_user
-      });
-    }, function(){
-      alert("error");
+    var imei = device.uuid;
+    $scope.socket.emit('login', {
+      'django_id': imei,
+      'usertype': 'CELL',
+      'web_password': $scope.password,
+      'password': $scope.socket_pass,
+      'username': $scope.socket_user
     });
   }
 })
@@ -177,19 +161,14 @@ angular.module('starter.controllers', [])
     $timeout(function() {
         $scope.spinner_show = true;
     }, 500);
-
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      console.log("enviare el login");
-      $scope.socket.emit('web-login', {
-        'django_id': imei,
-        'usertype': 'CELL',
-        'web_password': $scope.password,
-        'password': $scope.socket_pass,
-        'username': $scope.socket_user
-      });
-    }, function(){
-      alert("error")
+    var imei = device.uuid;
+    console.log("enviare el login");
+    $scope.socket.emit('web-login', {
+      'django_id': imei,
+      'usertype': 'CELL',
+      'web_password': $scope.password,
+      'password': $scope.socket_pass,
+      'username': $scope.socket_user
     });
     $scope.socket.on('web-success-login', function() {
       $rootScope.logged = true;
@@ -208,13 +187,9 @@ angular.module('starter.controllers', [])
   $scope.leerQR = function() {
       $cordovaBarcodeScanner.scan().then(function(imagenEscaneada) {
         console.log(imagenEscaneada);
-        window.plugins.sim.getSimInfo(function(result){
-          var imei = result.deviceId;
-          console.log(imei);
-          $scope.socket.emit('ionic-qr', {'web_id': imagenEscaneada.text, 'cell_id': imei});
-        },function(){
-          alert("Error");
-        });
+        var imei = device.uuid;
+        console.log(imei);
+        $scope.socket.emit('ionic-qr', {'web_id': imagenEscaneada.text, 'cell_id': imei});
       }, function(error){
           alert('Ha ocurrido un error ' + error);
       });
@@ -231,14 +206,10 @@ angular.module('starter.controllers', [])
 
   $scope.test_sesion = function(){
     console.log("test sesion")
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      $scope.socket.emit('identify', {
-        'django_id': imei,
-        'usertype': 'CELL'
-      });
-    }, function(){
-      alert("error");
+    var imei = device.uuid;
+    $scope.socket.emit('identify', {
+      'django_id': imei,
+      'usertype': 'CELL'
     });
   }
 
@@ -293,14 +264,10 @@ angular.module('starter.controllers', [])
     }
     var values = $scope.pedidos.filter(f_p);
     if(values){
-      window.plugins.sim.getSimInfo(function(result){
-        var imei = result.deviceId;
-        $scope.emit_message('accept-pedido', {'pedido_id': id, 'cell_id': imei});
-        $scope.accepted[id] = true;
-        $scope.start_gps();
-      },function(){
-        alert("Error");
-      });
+      var imei = device.uuid;
+      $scope.emit_message('accept-pedido', {'pedido_id': id, 'cell_id': imei});
+      $scope.accepted[id] = true;
+      $scope.start_gps();
       $cordovaLocalNotification.cancel(id).then(function (result) {
         console.log("notificacion borrada");
       });
@@ -310,12 +277,8 @@ angular.module('starter.controllers', [])
   $scope.recojer = function (id, tipo) {
     delete $scope.accepted[id];
     $scope.picked[id] = true;
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      $scope.emit_message('recojer-pedido', {'pedido_id': id, 'cell_id': imei, 'tipo': tipo});
-    }, function(){
-      alert("error");
-    });
+    var imei = device.uuid;
+    $scope.emit_message('recojer-pedido', {'pedido_id': id, 'cell_id': imei, 'tipo': tipo});
   }
 
   $scope.confirmar = function(pedido_id, tipo){
@@ -379,19 +342,15 @@ angular.module('starter.controllers', [])
     options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
 
     var params = {};
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      params.django_id = imei;
-      params.usertype = 'CELL';
-      params.pedido = pedido_id;
-      params.tipo = tipo;
-      options.params = params;
+    var imei = device.uuid;
+    params.django_id = imei;
+    params.usertype = 'CELL';
+    params.pedido = pedido_id;
+    params.tipo = tipo;
+    options.params = params;
 
-      var ft = new FileTransfer();
-      ft.upload(fileURL, encodeURI("http://192.168.0.16:4000/upload"), win, fail, options);
-    }, function(){
-      alert("Error");
-    });
+    var ft = new FileTransfer();
+    ft.upload(fileURL, encodeURI("http://104.236.33.228:4000/upload"), win, fail, options);
   }
 
   $scope.uploadCancelImage = function(fileURL, pedido_id, tipo){
@@ -425,19 +384,15 @@ angular.module('starter.controllers', [])
     options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
 
     var params = {};
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      params.django_id = imei;
-      params.usertype = 'CELL';
-      params.pedido = pedido_id;
-      params.tipo = tipo;
-      options.params = params;
+    var imei = device.uuid;
+    params.django_id = imei;
+    params.usertype = 'CELL';
+    params.pedido = pedido_id;
+    params.tipo = tipo;
+    options.params = params;
 
-      var ft = new FileTransfer();
-      ft.upload(fileURL, encodeURI("http://192.168.0.16:4000/cancel"), win, fail, options);
-    }, function(){
-      alert("error");
-    });
+    var ft = new FileTransfer();
+    ft.upload(fileURL, encodeURI("http://104.236.33.228:4000/cancel"), win, fail, options);
   }
 
   $scope.socket.on('modificar-pedido', function(message) {
@@ -529,16 +484,12 @@ angular.module('starter.controllers', [])
     $scope.$apply();
     $scope.start_gps();
     $scope.emit_message('visit-message',{message_id: message.message_id, 'emit': message.emit});
-    window.plugins.sim.getSimInfo(function(result){
-      var imei = result.deviceId;
-      if (message.tipo == 1) {
-        $scope.emit_message('pedido-recibido', {'pedido_id': message.id, 'cell_id': imei});
-      }else{
-        $scope.emit_message('accept-pedido', {'pedido_id': message.id, 'cell_id': imei});
-      }
-    }, function(){
-      alert("error");
-    });
+    var imei = device.uuid;
+    if (message.tipo == 1) {
+      $scope.emit_message('pedido-recibido', {'pedido_id': message.id, 'cell_id': imei});
+    }else{
+      $scope.emit_message('accept-pedido', {'pedido_id': message.id, 'cell_id': imei});
+    }
   });
 
   $scope.socket.on('trasladar-pedido', function(message) {

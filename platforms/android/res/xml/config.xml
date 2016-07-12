@@ -42,9 +42,6 @@
     <feature name="FileTransfer">
         <param name="android-package" value="org.apache.cordova.filetransfer.FileTransfer" />
     </feature>
-    <feature name="Sim">
-        <param name="android-package" value="com.pbakondy.Sim" />
-    </feature>
     <name>ExpressAPP</name>
     <description>
         An Ionic Framework and Cordova project.

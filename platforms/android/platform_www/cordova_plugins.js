@@ -299,20 +299,6 @@ module.exports = [
         "clobbers": [
             "window.FileTransfer"
         ]
-    },
-    {
-        "file": "plugins/cordova-plugin-sim/www/sim.js",
-        "id": "cordova-plugin-sim.Sim",
-        "merges": [
-            "window.plugins.sim"
-        ]
-    },
-    {
-        "file": "plugins/cordova-plugin-sim/www/android/sim.js",
-        "id": "cordova-plugin-sim.SimAndroid",
-        "merges": [
-            "window.plugins.sim"
-        ]
     }
 ];
 module.exports.metadata = 
@@ -333,8 +319,7 @@ module.exports.metadata =
     "cordova-plugin-geolocation": "2.2.0",
     "cordova-plugin-camera": "2.2.0",
     "cordova-plugin-file": "4.2.0",
-    "cordova-plugin-file-transfer": "1.5.1",
-    "cordova-plugin-sim": "1.2.1"
+    "cordova-plugin-file-transfer": "1.5.1"
 };
 // BOTTOM OF METADATA
 });
