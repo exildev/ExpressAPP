@@ -17,8 +17,9 @@ angular.module('starter.controllers', [])
   $scope.socket_pass = '123456';
   $scope.socket_user = 'user1';
   $scope.nombre = "Express del norte";
-  $scope.foto = "images/avatar.jpg";
-  
+  $scope.foto = "images/logo.png";
+  $scope.has_foto = false;
+
   $scope.socket = io('http://104.236.33.228:4000');
 
 
@@ -61,6 +62,7 @@ angular.module('starter.controllers', [])
   });
 
   $scope.socket.on('numero-pedido', function(message){
+    $scope.emit_message('delete-message',{message_id: message.message_id});
     $scope.numero_pedidos = message.numero_pedidos;
     $scope.$apply();
   });
@@ -72,6 +74,7 @@ angular.module('starter.controllers', [])
 
     if (message.foto) {
       $scope.foto = message.foto;
+      $scope.has_foto = true;
     };
     $scope.$apply();
   });
@@ -84,11 +87,6 @@ angular.module('starter.controllers', [])
 
   $scope.send_messages = function() {
     var imei = device.uuid;
-    $scope.socket.emit('numero-pedido', {
-      'django_id': imei,
-      'usertype': 'CELL',
-      'cell_id': imei
-    });
 
     for (var i = $scope.messages.length - 1; i >= 0; i--) {
       var message = $scope.messages[i];
@@ -174,6 +172,7 @@ angular.module('starter.controllers', [])
       $rootScope.logged = true;
       $state.go('app.entregas');
       $scope.send_messages();
+      $scope.emit_message('numero-pedido', {'cell_id': imei});
     });
     $scope.socket.on('web-error-login', function() {
       $scope.submited = false;
@@ -323,6 +322,10 @@ angular.module('starter.controllers', [])
       if(values){
         var index = $scope.pedidos.indexOf(values[0]);
         $scope.emit_message('delete-message',{message_id: $scope.pedidos[index].message_id});
+
+        var imei = device.uuid;
+        $scope.emit_message('numero-pedido', {'cell_id': imei});
+
         $scope.pedidos.splice(index, 1);
         $scope.$apply();
         if ($scope.pedidos.length <=0) {
