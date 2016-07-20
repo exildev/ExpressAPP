@@ -87,6 +87,7 @@ ext {
 
 // PLUGIN GRADLE EXTENSIONS START
 apply from: "phonegap-plugin-barcodescanner/expressapp167188-barcodescanner.gradle"
+apply from: "cordova-plugin-crosswalk-webview/expressapp167188-xwalk.gradle"
 // PLUGIN GRADLE EXTENSIONS END
 
 def hasBuildExtras = file('build-extras.gradle').exists()
@@ -243,6 +244,8 @@ dependencies {
     debugCompile project(path: "CordovaLib", configuration: "debug")
     releaseCompile project(path: "CordovaLib", configuration: "release")
     compile "com.android.support:support-v4:+"
+    compile "com.android.support:support-v4:23.+"
+    compile "com.android.support:appcompat-v7:23.+"
     // SUB-PROJECT DEPENDENCIES END
 }
 

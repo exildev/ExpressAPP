@@ -19,6 +19,8 @@ angular.module('starter.controllers', [])
   $scope.nombre = "Express del norte";
   $scope.foto = "images/logo.png";
   $scope.has_foto = false;
+  $scope.nstatus = "network_wifi";
+  $scope.cstatus = "#4CAF50";
 
   $scope.socket = io('http://104.236.33.228:4000');
 
@@ -33,6 +35,16 @@ angular.module('starter.controllers', [])
       'cell_id': imei
     });
   }, false);
+
+  window.addEventListener("online", function(e) {
+    $scope.nstatus = "network_wifi";
+    $scope.cstatus = "#4CAF50";
+  }, false);    
+ 
+  window.addEventListener("offline", function(e) {
+    $scope.nstatus = "ic_signal_wifi_off";
+    $scope.cstatus = "#f44336";
+  }, false);  
 
   $scope.socket.on('identify', function(message) {
     console.log(message);
