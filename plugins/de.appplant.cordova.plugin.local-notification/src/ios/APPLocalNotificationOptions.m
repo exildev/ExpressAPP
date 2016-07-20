@@ -90,14 +90,6 @@ NSString* const DEFAULT_SOUND = @"res://platform_default";
     return [[dict objectForKey:@"badge"] intValue];
 }
 
-/**
- * The notification's category.
- */
-- (NSString*) category
-{
-    return [dict objectForKey:@"category"];
-}
-
 #pragma mark -
 #pragma mark Complex Attributes
 
@@ -180,6 +172,9 @@ NSString* const DEFAULT_SOUND = @"res://platform_default";
     }
     else if ([interval isEqualToString:@"month"]) {
         return NSCalendarUnitMonth;
+    }
+    else if ([interval isEqualToString:@"quarter"]) {
+        return NSCalendarUnitQuarter;
     }
     else if ([interval isEqualToString:@"year"]) {
         return NSCalendarUnitYear;

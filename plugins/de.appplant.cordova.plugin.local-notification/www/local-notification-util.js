@@ -38,13 +38,14 @@ exports._defaults = {
     id:    0,
     data:  undefined,
     every: undefined,
-    at:    undefined,
-    actions: undefined,
-    category: undefined
+    at:    undefined
 };
 
 // listener
 exports._listener = {};
+
+// Registered permission flag
+exports._registered = false;
 
 
 /********
@@ -62,11 +63,12 @@ exports.applyPlatformSpecificOptions = function () {
 
     switch (device.platform) {
     case 'Android':
-        defaults.icon      = 'res://icon';
-        defaults.smallIcon = 'res://ic_popup_reminder';
+        defaults.icon      = 'res://ic_popup_reminder';
+        defaults.smallIcon = undefined;
         defaults.ongoing   = false;
         defaults.autoClear = true;
-        defaults.led       = 'FFFFFF';
+        defaults.led       = 'FF0000';
+        defaults.color     = undefined;
         break;
     }
 
@@ -170,47 +172,17 @@ exports.convertProperties = function (options) {
         options.data = JSON.stringify(options.data);
     }
 
-    return options;
-};
-
-/**
- * Convert the passed values to their required type, modifying them
- * directly for Android and passing the converted list back for iOS.
- *
- * @param {Object} options
- *      Set of custom values
- *
- * @return {Object}
- *      The prepared interaction object w/ category & actions
- */
-exports.prepareActions = function (options) {
-    var MAX_ACTIONS;
-
-    if (device.platform === 'iOS') {
-        MAX_ACTIONS = 4;
-    } else {
-        MAX_ACTIONS = 3;
-    }
-
-    if (options.category && options.actions) {
-        var interaction = { 
-            category: options.category, 
-            actions: [] 
-        };
-
-        for (var i = 0; i < options.actions.length && MAX_ACTIONS > 0; i++) {
-            if (options.actions[i].identifier) {
-                interaction.actions.push(options.actions[i]);
-                MAX_ACTIONS--;
-            } else {
-                console.warn('Action with title ' + options.actions[i].title 
-                    + ' has no identifier and will not be added.');
-            }
+    if (options.every) {
+        if (device.platform == 'iOS' && typeof options.every != 'string') {
+            options.every = this.getDefaults().every;
+            var warning = 'Every option is not a string: ' + options.id;
+            warning += '. Expects one of: second, minute, hour, day, week, ';
+            warning += 'month, year on iOS.';
+            console.warn(warning);
         }
-
-        options.actions = interaction.actions;
-        return interaction;
     }
+
+    return options;
 };
 
 /**

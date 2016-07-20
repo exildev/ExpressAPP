@@ -29,13 +29,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 import java.util.Random;
-
-import de.appplant.cordova.plugin.notification.Action;
 
 /**
  * Builder class for local notifications. Build fully configured local
@@ -119,12 +115,9 @@ public class Builder {
      * Creates the notification with all its options passed through JS.
      */
     public Notification build() {
-        Uri sound = options.getSoundUri();
-        NotificationCompat.BigTextStyle style;
+        Uri sound     = options.getSoundUri();
+        int smallIcon = options.getSmallIcon();
         NotificationCompat.Builder builder;
-
-        style = new NotificationCompat.BigTextStyle()
-                .bigText(options.getText());
 
         builder = new NotificationCompat.Builder(context)
                 .setDefaults(0)
@@ -132,15 +125,20 @@ public class Builder {
                 .setContentText(options.getText())
                 .setNumber(options.getBadgeNumber())
                 .setTicker(options.getText())
-                .setSmallIcon(options.getSmallIcon())
-                .setLargeIcon(options.getIconBitmap())
                 .setAutoCancel(options.isAutoClear())
                 .setOngoing(options.isOngoing())
-                .setStyle(style)
-                .setLights(options.getLedColor(), 500, 500);
+                .setColor(options.getColor())
+                .setLights(options.getLedColor(), 100, 100);
 
         if (sound != null) {
             builder.setSound(sound);
+        }
+
+        if (smallIcon == 0) {
+            builder.setSmallIcon(options.getIcon());
+        } else {
+            builder.setSmallIcon(options.getSmallIcon());
+            builder.setLargeIcon(options.getIconBitmap());
         }
 
         applyDeleteReceiver(builder);
@@ -161,18 +159,18 @@ public class Builder {
         if (clearReceiver == null)
             return;
 
-        Intent deleteIntent = new Intent(context, clearReceiver)
+        Intent intent = new Intent(context, clearReceiver)
                 .setAction(options.getIdStr())
                 .putExtra(Options.EXTRA, options.toString());
 
-        PendingIntent dpi = PendingIntent.getBroadcast(
-                context, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent deleteIntent = PendingIntent.getBroadcast(
+                context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        builder.setDeleteIntent(dpi);
+        builder.setDeleteIntent(deleteIntent);
     }
 
     /**
-     * Set intents to handle the click event and other actions. Will bring the app to
+     * Set intent to handle the click event. Will bring the app to
      * foreground.
      *
      * @param builder
@@ -184,42 +182,15 @@ public class Builder {
             return;
 
         Intent intent = new Intent(context, clickActivity)
-                .putExtra(Options.EXTRA, new String[]{ options.toString(), null })
+                .putExtra(Options.EXTRA, options.toString())
                 .setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
-        int requestCode = new Random().nextInt();
+        int reqCode = new Random().nextInt();
 
         PendingIntent contentIntent = PendingIntent.getActivity(
-                context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        Action[] actionsArray = options.getActions();
-        if (actionsArray != null && actionsArray.length > 0) {
-            for (Action action : actionsArray) {
-                builder.addAction(action.getIcon(), action.getTitle(), getPendingIntentForAction(action));
-            }
-        }
+                context, reqCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(contentIntent);
-    }
-
-    /**
-     * Returns a new PendingIntent for a notification action, including the
-     * action's identifier.
-     *
-     * @param action
-     *      Notification action needing the PendingIntent
-     */
-    private PendingIntent getPendingIntentForAction(Action action) {
-        Intent intent = new Intent(context, clickActivity)
-                .putExtra(Options.EXTRA, new String[]{ options.toString(), action.getIdentifier() })
-                .setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-
-        int requestCode = new Random().nextInt();
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        return pendingIntent;
     }
 
 }

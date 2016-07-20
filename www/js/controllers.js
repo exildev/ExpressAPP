@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope, $state) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope, $state, $cordovaDialogs) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -24,8 +24,31 @@ angular.module('starter.controllers', [])
 
   $scope.socket = io('http://104.236.33.228:4000');
 
+  $scope.confirmar = function() {
+    $cordovaDialogs.confirm('Esta aplicación solo funciona con el gps activado en Alta presición.', 'Gps', ['Activar GPS'])
+    .then(function(result) {
+        if (result === 1) {
+            cordova.plugins.diagnostic.switchToLocationSettings();
+        }else{
+          $scope.check_gps();
+        }
+    });
+  };
+
+  $scope.check_gps = function(){
+    cordova.plugins.diagnostic.getLocationMode(function(state) {
+      if (!(state == "high_accuracy")) {
+        $scope.confirmar();
+      }
+    });
+  }
+
+  document.addEventListener("resume", function() {
+    $scope.check_gps();
+  }, false);
 
   document.addEventListener("deviceready", function(){
+    $scope.check_gps();
     var imei = device.uuid;
     $scope.socket.emit('identify', {
       'django_id': imei,
@@ -249,6 +272,7 @@ angular.module('starter.controllers', [])
     if (!angular.isDefined($scope.intervalGPS)) {
       $scope.intervalGPS = $interval(function() {
         var posOptions = {timeout: 10000, enableHighAccuracy: true};
+          $scope.check_gps();
           $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
             var lat  = position.coords.latitude;
             var lng = position.coords.longitude;

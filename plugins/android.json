@@ -7,10 +7,28 @@
         "files": {}
     },
     "installed_plugins": {
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
+        "cordova-plugin-crosswalk-webview": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
         "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
+        },
+        "cordova-plugin-network-information": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
         "cordova-plugin-splashscreen": {
@@ -22,37 +40,13 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
-        "ionic-plugin-keyboard": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
         "cordova-plugin-x-toast": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
-        "phonegap-plugin-barcodescanner": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
-        "de.appplant.cordova.plugin.local-notification-ios9-fix": {
+        "cordova.plugins.diagnostic": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
         "de.appplant.cordova.plugin.local-notification": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
-        "cordova-plugin-geolocation": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
-        "cordova-plugin-file-transfer": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
-        "cordova-plugin-network-information": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
-        "cordova-plugin-crosswalk-webview": {
-            "PACKAGE_NAME": "com.ionicframework.expressapp167188"
-        },
-        "cordova.plugins.diagnostic": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     },
@@ -60,10 +54,10 @@
         "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
-        "cordova-plugin-app-event": {
+        "cordova-plugin-file": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         },
-        "cordova-plugin-file": {
+        "cordova-plugin-app-event": {
             "PACKAGE_NAME": "com.ionicframework.expressapp167188"
         }
     }
