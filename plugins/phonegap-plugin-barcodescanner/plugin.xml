@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     id="phonegap-plugin-barcodescanner"
-    version="5.0.0">
+    version="6.0.1">
 
     <name>BarcodeScanner</name>
     <description>You can use the BarcodeScanner plugin to scan different types of barcodes (using the device's camera) and get the metadata encoded in them for processing within your application.</description>
@@ -97,21 +97,6 @@
         <dependency id="cordova-plugin-compat" version="^1.0.0" />
     </platform>
 
-    <platform name="windows8">
-        <js-module src="src/windows/BarcodeScannerProxy.js" name="BarcodeScannerProxy">
-            <merges target="" />
-        </js-module>
-
-        <config-file target="package.appxmanifest" parent="/Package/Capabilities">
-            <DeviceCapability Name="webcam" />
-        </config-file>
-
-        <framework src="src/windows/lib/WinRTBarcodeReader.csproj" custom="true" type="projectReference" versions="&lt;=8.1"/>
-        <framework src="src/windows/lib.UW/WinRTBarcodeReader.UW.csproj" custom="true" type="projectReference" versions=">8.1"/>
-
-        <asset src="src/windows/assets/plugin-barcodeScanner.css" target="css/plugin-barcodeScanner.css" />
-    </platform>
-
     <platform name="windows">
         <js-module src="src/windows/BarcodeScannerProxy.js" name="BarcodeScannerProxy">
             <merges target="" />
@@ -127,6 +112,8 @@
         <framework src="src/windows/lib/WinRTBarcodeReader.csproj" custom="true" type="projectReference" versions="&lt;=8.1"/>
 
         <asset src="src/windows/assets/plugin-barcodeScanner.css" target="css/plugin-barcodeScanner.css" />
+        <hook src="hooks/windows/check-arch.js" type="before_compile" />
+        <hook src="hooks/windows/check-arch.js" type="before_run" />
     </platform>
 
     <!-- Windows Phone 8 -->

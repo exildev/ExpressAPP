@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope, $state, $cordovaDialogs) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, $rootScope, $state, $cordovaDialogs, $cordovaLocalNotification) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -37,7 +37,13 @@ angular.module('starter.controllers', [])
 
   $scope.check_gps = function(){
     cordova.plugins.diagnostic.getLocationMode(function(state) {
+      console.log('gps state', state);
       if (!(state == "high_accuracy")) {
+        $cordovaLocalNotification.schedule({
+          id: 1,
+          title:"Error en el GPS",
+          text: 'el error es ' + state,
+        });
         $scope.confirmar();
       }
     });
@@ -219,6 +225,7 @@ angular.module('starter.controllers', [])
   }
 
   $scope.leerQR = function() {
+      alert("qr");
       $cordovaBarcodeScanner.scan().then(function(imagenEscaneada) {
         console.log(imagenEscaneada);
         var imei = device.uuid;
@@ -271,7 +278,7 @@ angular.module('starter.controllers', [])
     console.log("start gps");
     if (!angular.isDefined($scope.intervalGPS)) {
       $scope.intervalGPS = $interval(function() {
-        var posOptions = {timeout: 10000, enableHighAccuracy: true};
+        var posOptions = {maximumAge: 5000, timeout: 10000, enableHighAccuracy: false};
           $scope.check_gps();
           $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
             var lat  = position.coords.latitude;
@@ -435,7 +442,7 @@ angular.module('starter.controllers', [])
   }
 
   $scope.socket.on('modificar-pedido', function(message) {
-
+    console.log('modificar-pedido', message);
     message.info.cliente = message.cliente[0];
     message.empresa = message.tienda[0];
     message.info.total_pedido = message.total;
@@ -510,7 +517,7 @@ angular.module('starter.controllers', [])
   });
 
   $scope.socket.on('asignar-pedido', function(message) {
-    console.log(message);
+    console.log('asignar-pedido', message);
     if (message.tipo == 1) {
       message.info.cliente = message.cliente[0];
       message.empresa = message.tienda[0];

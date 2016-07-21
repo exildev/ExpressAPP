@@ -19,6 +19,14 @@ angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'angular
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+
+    cordova.plugins.backgroundMode.setDefaults({ 
+      title:  'Express del Norte',
+      text:   'APP para motorizado'
+    });
+
+    // Enable background mode
+    cordova.plugins.backgroundMode.enable();
   });
 })
 
