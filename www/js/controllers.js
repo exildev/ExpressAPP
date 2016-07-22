@@ -39,17 +39,13 @@ angular.module('starter.controllers', [])
     cordova.plugins.diagnostic.getLocationMode(function(state) {
       console.log('gps state', state);
       if (!(state == "high_accuracy")) {
-        $cordovaLocalNotification.schedule({
-          id: 1,
-          title:"Error en el GPS",
-          text: 'el error es ' + state,
-        });
         $scope.confirmar();
       }
     });
   }
 
   document.addEventListener("resume", function() {
+    console.log("resume");
     $scope.check_gps();
   }, false);
 
@@ -241,6 +237,7 @@ angular.module('starter.controllers', [])
 })
 
 .controller('EntregaCtrl', function($scope, $cordovaLocalNotification, $cordovaGeolocation, $interval, Camera) {
+  $scope.check_gps();
   $scope.accepted = {};
   $scope.picked = {};
   $scope.intervalGPS = undefined;
@@ -276,25 +273,25 @@ angular.module('starter.controllers', [])
 
   $scope.start_gps = function(){
     console.log("start gps");
-    if (!angular.isDefined($scope.intervalGPS)) {
-      $scope.intervalGPS = $interval(function() {
-        var posOptions = {maximumAge: 5000, timeout: 10000, enableHighAccuracy: false};
-          $scope.check_gps();
+    if ($scope.intervalGPS == undefined) {
+      $scope.intervalGPS = window.setInterval(function() {
+        var posOptions = {timeout: 10000, enableHighAccuracy: true};
           $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
             var lat  = position.coords.latitude;
             var lng = position.coords.longitude;
-            console.log(lat, lng);
             $scope.emit_message('send-gps', {'lat': lat, 'lng': lng});
           }, function(err) {
             $scope.emit_message('send-gps', {'error': err});
           });
-      }, 10000);
+      }, 5000);
     };
   }
 
   $scope.stop_gps = function() {
-    if (angular.isDefined($scope.intervalGPS)) {
-      $interval.cancel($scope.intervalGPS);
+    var imei = device.uuid;
+    $scope.emit_message('stop-gps', {'cell_id': imei});
+    if ($scope.intervalGPS != undefined) {
+      clearInterval($scope.intervalGPS);
       $scope.intervalGPS = undefined;
     }
   }
